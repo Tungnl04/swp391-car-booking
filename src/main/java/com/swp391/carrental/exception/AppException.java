@@ -1,3 +1,10 @@
+/*
+ * Name: AppException
+ * @Author: BacBXHE186736
+ * Date: 23/05/2026
+ * Version: 1.0
+ * Description: Handles business logic and operations for AppException.
+ */
 package com.swp391.carrental.exception;
 
 /**

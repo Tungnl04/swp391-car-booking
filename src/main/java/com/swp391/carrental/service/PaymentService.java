@@ -1,3 +1,10 @@
+/*
+ * Name: PaymentService
+ * @Author: TungNLHE186756
+ * Date: 23/05/2026
+ * Version: 1.0
+ * Description: Contains business logic for PaymentService.
+ */
 package com.swp391.carrental.service;
 
 import com.swp391.carrental.dao.PaymentDAO;

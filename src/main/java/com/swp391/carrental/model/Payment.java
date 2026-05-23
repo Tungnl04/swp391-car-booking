@@ -1,3 +1,10 @@
+/*
+ * Name: Payment
+ * @Author: TungNLHE186756
+ * Date: 23/05/2026
+ * Version: 1.0
+ * Description: Handles business logic and operations for Payment.
+ */
 package com.swp391.carrental.model;
 
 import java.math.BigDecimal;

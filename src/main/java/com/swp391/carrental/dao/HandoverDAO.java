@@ -1,3 +1,10 @@
+/*
+ * Name: HandoverDAO
+ * @Author: TamTTMHE190340
+ * Date: 23/05/2026
+ * Version: 1.0
+ * Description: Handles database operations for HandoverDAO.
+ */
 package com.swp391.carrental.dao;
 
 import com.swp391.carrental.model.VehicleHandover;

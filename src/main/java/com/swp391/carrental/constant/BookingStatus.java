@@ -1,3 +1,10 @@
+/*
+ * Name: BookingStatus
+ * @Author: BacBXHE186736
+ * Date: 23/05/2026
+ * Version: 1.0
+ * Description: Handles business logic and operations for BookingStatus.
+ */
 package com.swp391.carrental.constant;
 
 /**

@@ -1,3 +1,10 @@
+/*
+ * Name: VehicleService
+ * @Author: BacBXHE186736
+ * Date: 23/05/2026
+ * Version: 1.0
+ * Description: Contains business logic for VehicleService.
+ */
 package com.swp391.carrental.service;
 
 import com.swp391.carrental.dao.CarDAO;
