@@ -77,14 +77,6 @@
                                     <td style="text-align: right;">
                                         <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
                                             <a href="${pageContext.request.contextPath}/users?action=edit&userId=${u.userId}&search=${searchParam}&role=${roleParam}&status=${statusParam}" class="btn btn-outline" style="padding: 6px 12px; font-size: 13px;">Sửa</a>
-                                            
-                                            <c:if test="${u.userId != sessionScope.currentUser.userId}">
-                                                <form method="post" action="${pageContext.request.contextPath}/users" style="display: inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa thành viên này?');">
-                                                    <input type="hidden" name="action" value="delete">
-                                                    <input type="hidden" name="userId" value="${u.userId}">
-                                                    <button type="submit" class="btn btn-danger" style="padding: 6px 12px; font-size: 13px;">Xóa</button>
-                                                </form>
-                                            </c:if>
                                         </div>
                                     </td>
                                 </tr>

@@ -103,12 +103,6 @@ public class UserManagementServlet extends HttpServlet {
                 response.sendRedirect(contextPath + "/users");
                 return;
             }
-            if ("delete".equals(action)) {
-                int userId = parseUserId(request.getParameter("userId"));
-                userService.deleteUser(userId);
-                response.sendRedirect(contextPath + "/users");
-                return;
-            }
             response.sendRedirect(contextPath + "/users");
         } catch (AppException e) {
             request.setAttribute("error", e.getMessage());

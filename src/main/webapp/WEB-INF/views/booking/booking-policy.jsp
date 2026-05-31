@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<jsp:include page="/WEB-INF/views/booking/booking-header.jsp">
+<jsp:include page="/WEB-INF/views/layout/header.jsp">
     <jsp:param name="pageTitle" value="Chính Sách Đặt Xe"/>
 </jsp:include>
 
@@ -128,4 +128,4 @@
     </div>
 </div>
 
-<jsp:include page="/WEB-INF/views/booking/booking-footer.jsp"/>
+<jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

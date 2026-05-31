@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-<jsp:include page="/WEB-INF/views/booking/booking-header.jsp">
+<jsp:include page="/WEB-INF/views/layout/header.jsp">
     <jsp:param name="pageTitle" value="Quản Lý Đặt Xe"/>
 </jsp:include>
 
@@ -173,4 +173,4 @@ function filterTable() {
 }
 </script>
 
-<jsp:include page="/WEB-INF/views/booking/booking-footer.jsp"/>
+<jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
