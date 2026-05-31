@@ -38,7 +38,8 @@ public class AuthFilter implements Filter {
             "/",
             "/vehicles",
             "/vehicles/detail",
-            "/bookings/policy"
+            "/bookings/policy",
+            "/forgot-password"
     );
 
     /**
