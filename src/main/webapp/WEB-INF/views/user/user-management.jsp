@@ -18,12 +18,13 @@
         </div>
     </c:if>
 
-    <div class="bk-booking-grid" style="display: grid; grid-template-columns: 3fr 1fr; gap: 24px; align-items: start;">
+    <div class="bk-booking-grid" id="mainGrid" style="display: grid; grid-template-columns: ${not empty formUser ? '3fr 1fr' : '1fr'}; gap: 24px; align-items: start; transition: grid-template-columns 0.3s ease;">
         
         <%-- LEFT COLUMN: USER LIST TABLE --%>
         <div class="card">
-            <div class="card-header" style="margin-bottom: 20px;">
+            <div class="card-header" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
                 <h3>Danh sách thành viên</h3>
+                <button class="btn btn-primary" onclick="showAddForm()" style="padding: 10px 20px;">+ Thêm tài khoản</button>
             </div>
             
             <%-- Search & Filter Bar --%>
@@ -77,14 +78,6 @@
                                         <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
                                             <a href="${pageContext.request.contextPath}/users?action=edit&userId=${u.userId}&search=${searchParam}&role=${roleParam}&status=${statusParam}" class="btn btn-outline" style="padding: 6px 12px; font-size: 13px;">Sửa</a>
                                             
-                                            <form method="post" action="${pageContext.request.contextPath}/users" style="display: inline;">
-                                                <input type="hidden" name="action" value="toggleActive">
-                                                <input type="hidden" name="userId" value="${u.userId}">
-                                                <button type="submit" class="btn ${u.active ? 'btn-outline' : 'btn-success'}" style="padding: 6px 12px; font-size: 13px; min-width: 65px; border-color: var(--primary);">
-                                                    ${u.active ? 'Khóa' : 'Mở'}
-                                                </button>
-                                            </form>
-                                            
                                             <c:if test="${u.userId != sessionScope.currentUser.userId}">
                                                 <form method="post" action="${pageContext.request.contextPath}/users" style="display: inline;" onsubmit="return confirm('Bạn có chắc chắn muốn xóa thành viên này?');">
                                                     <input type="hidden" name="action" value="delete">
@@ -108,16 +101,17 @@
             </c:if>
         </div>
 
-        <%-- RIGHT COLUMN: ADD / EDIT FORM --%>
-        <div class="card">
-            <div class="card-header" style="margin-bottom: 20px;">
-                <h3>${not empty formUser ? 'Cập nhật tài khoản' : 'Thêm tài khoản'}</h3>
+        <%-- RIGHT COLUMN: ADD / EDIT FORM CARD --%>
+        <div class="card" id="formCard" style="display: ${not empty formUser ? 'block' : 'none'};">
+            <div class="card-header" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="formTitle">${not empty formUser ? 'Cập nhật tài khoản' : 'Thêm tài khoản'}</h3>
+                <button type="button" onclick="closeForm()" style="background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-secondary); line-height: 1;">&times;</button>
             </div>
             
             <form method="post" action="${pageContext.request.contextPath}/users">
-                <input type="hidden" name="action" value="${not empty formUser ? 'edit' : 'create'}">
+                <input type="hidden" id="formAction" name="action" value="${not empty formUser ? 'edit' : 'create'}">
                 <c:if test="${not empty formUser}">
-                    <input type="hidden" name="userId" value="${formUser.userId}">
+                    <input type="hidden" id="userIdField" name="userId" value="${formUser.userId}">
                 </c:if>
 
                 <div class="form-group" style="margin-bottom: 16px;">
@@ -131,13 +125,13 @@
                 </div>
 
                 <c:if test="${empty formUser}">
-                    <div class="form-group" style="margin-bottom: 16px;">
+                    <div class="form-group" id="passwordField" style="margin-bottom: 16px;">
                         <label for="password">Mật khẩu</label>
                         <input type="password" id="password" name="password" class="form-control" placeholder="Nhập mật khẩu ít nhất 6 ký tự" required minlength="6">
                     </div>
                 </c:if>
 
-                <div class="form-group" style="margin-bottom: 16px;">
+                <div class="form-group" id="phoneField" style="margin-bottom: 16px;">
                     <label for="phone">Số điện thoại</label>
                     <input type="tel" id="phone" name="phone" class="form-control" placeholder="0901234567" value="${not empty formUser ? formUser.phone : ''}">
                 </div>
@@ -153,15 +147,15 @@
 
                 <div class="form-group" style="margin-bottom: 24px; display: flex; align-items: center; gap: 8px; cursor: pointer;">
                     <input type="checkbox" id="isActive" name="isActive" value="1" ${empty formUser || formUser.active ? 'checked' : ''} style="width: 18px; height: 18px; cursor: pointer;">
-                    <label for="isActive" style="margin-bottom: 0; cursor: pointer;">Kích hoạt tài khoản</label>
+                    <label for="isActive" style="margin-bottom: 0; cursor: pointer; font-size: 14px; font-weight: 600;">Kích hoạt tài khoản</label>
                 </div>
 
                 <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+                    <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; padding: 12px;">
                         ${not empty formUser ? 'Lưu cập nhật' : 'Thêm tài khoản'}
                     </button>
                     <c:if test="${not empty formUser}">
-                        <a href="${pageContext.request.contextPath}/users" class="btn btn-outline" style="width: 100%; padding: 12px;">Hủy chỉnh sửa</a>
+                        <a href="${pageContext.request.contextPath}/users" id="cancelBtn" class="btn btn-outline" style="width: 100%; padding: 12px;">Hủy chỉnh sửa</a>
                     </c:if>
                 </div>
             </form>
@@ -169,4 +163,48 @@
 
     </div>
 </div>
+
+<script>
+function showAddForm() {
+    document.getElementById("mainGrid").style.gridTemplateColumns = "3fr 1fr";
+    document.getElementById("formCard").style.display = "block";
+    
+    // Reset Form to Add/Create mode dynamically
+    document.getElementById("formTitle").innerText = "Thêm tài khoản";
+    document.getElementById("formAction").value = "create";
+    
+    var userIdEl = document.getElementById("userIdField");
+    if (userIdEl) userIdEl.remove();
+    
+    document.getElementById("fullName").value = "";
+    document.getElementById("email").value = "";
+    document.getElementById("email").readOnly = false;
+    document.getElementById("email").style.background = "";
+    document.getElementById("email").style.cursor = "";
+    
+    if (!document.getElementById("passwordField")) {
+        var passHtml = '<div class="form-group" id="passwordField" style="margin-bottom: 16px;"><label for="password">Mật khẩu</label><input type="password" id="password" name="password" class="form-control" placeholder="Nhập mật khẩu ít nhất 6 ký tự" required minlength="6"></div>';
+        document.getElementById("phoneField").insertAdjacentHTML('beforebegin', passHtml);
+    }
+    
+    document.getElementById("phone").value = "";
+    document.getElementById("role").value = "CUSTOMER";
+    document.getElementById("isActive").checked = true;
+    document.getElementById("submitBtn").innerText = "Thêm tài khoản";
+    
+    var cancelBtnEl = document.getElementById("cancelBtn");
+    if (cancelBtnEl) cancelBtnEl.remove();
+}
+
+function closeForm() {
+    document.getElementById("mainGrid").style.gridTemplateColumns = "1fr";
+    document.getElementById("formCard").style.display = "none";
+    
+    // If currently in Edit mode, reload without params to keep URL clean
+    if (document.getElementById("formAction").value === "edit") {
+        window.location.href = "${pageContext.request.contextPath}/users";
+    }
+}
+</script>
+
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
