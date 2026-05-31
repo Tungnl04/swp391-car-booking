@@ -31,7 +31,7 @@
                 <li><a href="${pageContext.request.contextPath}/handovers">🔑 Giao Xe</a></li>
                 <li><a href="${pageContext.request.contextPath}/returns">🔄 Nhận Lại Xe</a></li>
                 <li><a href="${pageContext.request.contextPath}/additional-fees">💰 Phí Phát Sinh</a></li>
-                <li><a href="${pageContext.request.contextPath}/payments/record">💳 Lịch Sử Thanh Toán</a></li>
+                <li><a href="${pageContext.request.contextPath}/payments/record">💳 Thanh Toán & Giao Dịch</a></li>
                 <li><a href="${pageContext.request.contextPath}/policies">⚖️ Cấu Hình Chính Sách</a></li>
 
                 <li class="menu-section">Báo Cáo</li>
@@ -44,6 +44,7 @@
                 <li><a href="${pageContext.request.contextPath}/users">👥 Quản Lý Người Dùng</a></li>
                 <li><a href="${pageContext.request.contextPath}/roles">🔐 Phân Quyền</a></li>
                 <li><a href="${pageContext.request.contextPath}/tax-invoice-settings">🧾 Cấu Hình Thuế & Hóa Đơn</a></li>
+                <li><a href="${pageContext.request.contextPath}/admin/payment-settings">💳 Cấu Hình Thanh Toán</a></li>
             </c:if>
         </c:if>
     </ul>
