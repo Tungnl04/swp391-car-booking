@@ -94,6 +94,29 @@ CREATE TABLE car_images (
 GO
 
 -- ============================================================
+-- 4b. MAINTENANCE_SCHEDULES
+-- Scheduled and completed maintenance for fleet vehicles
+-- ============================================================
+CREATE TABLE maintenance_schedules (
+    maintenance_id      INT IDENTITY(1,1) PRIMARY KEY,
+    car_id              INT             NOT NULL,
+    maintenance_type    NVARCHAR(50)    NOT NULL,
+    scheduled_date      DATE            NOT NULL,
+    completed_date      DATE            NULL,
+    status              NVARCHAR(20)    NOT NULL DEFAULT 'SCHEDULED',  -- SCHEDULED, COMPLETED, CANCELLED
+    description         NVARCHAR(500)   NULL,
+    cost                DECIMAL(18,2)   NOT NULL DEFAULT 0,
+    notes               NVARCHAR(MAX)   NULL,
+    created_by          NVARCHAR(255)   NULL,
+    updated_by          NVARCHAR(255)   NULL,
+    created_at          DATETIME2       NOT NULL DEFAULT GETDATE(),
+    updated_at          DATETIME2       NOT NULL DEFAULT GETDATE(),
+
+    CONSTRAINT FK_maintenance_schedules_car FOREIGN KEY (car_id) REFERENCES cars(car_id)
+);
+GO
+
+-- ============================================================
 -- 5. BOOKINGS
 -- Rental reservations
 -- ============================================================
