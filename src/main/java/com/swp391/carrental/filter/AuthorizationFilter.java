@@ -44,10 +44,12 @@ public class AuthorizationFilter implements Filter {
         ROLE_RESTRICTIONS.put("/maintenance", Arrays.asList(Role.ADMIN, Role.STAFF));
         ROLE_RESTRICTIONS.put("/bookings/manage", Arrays.asList(Role.ADMIN, Role.STAFF));
         ROLE_RESTRICTIONS.put("/bookings/approval", Arrays.asList(Role.ADMIN, Role.STAFF));
+        ROLE_RESTRICTIONS.put("/bookings/calendar", Arrays.asList(Role.ADMIN, Role.STAFF));
         ROLE_RESTRICTIONS.put("/contracts", Arrays.asList(Role.ADMIN, Role.STAFF));
         ROLE_RESTRICTIONS.put("/payments/record", Arrays.asList(Role.ADMIN, Role.STAFF));
         ROLE_RESTRICTIONS.put("/policies", Arrays.asList(Role.ADMIN, Role.STAFF));
         ROLE_RESTRICTIONS.put("/tax-invoice-settings", Arrays.asList(Role.ADMIN));
+        ROLE_RESTRICTIONS.put("/admin/payment-settings", Arrays.asList(Role.ADMIN));
         ROLE_RESTRICTIONS.put("/handovers", Arrays.asList(Role.ADMIN, Role.STAFF));
         ROLE_RESTRICTIONS.put("/returns", Arrays.asList(Role.ADMIN, Role.STAFF));
         ROLE_RESTRICTIONS.put("/additional-fees", Arrays.asList(Role.ADMIN, Role.STAFF));
