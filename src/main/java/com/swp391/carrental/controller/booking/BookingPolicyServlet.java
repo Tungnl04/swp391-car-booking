@@ -1,6 +1,6 @@
 /*
  * Name: BookingPolicyServlet
- * @Author: BacBui
+ * @Author: BacBXHE186736
  * Date: 29/05/2026
  * Version: 1.0
  * Description: Displays booking-related policies (read-only). Accessible by all logged-in users.
