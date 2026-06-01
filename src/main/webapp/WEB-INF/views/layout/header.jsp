@@ -85,6 +85,9 @@
                 <a href="${pageContext.request.contextPath}/reports/revenue" class="bk-sidebar-link ${_cp == '/reports/revenue' ? 'active' : ''}">
                     <span class="material-symbols-outlined">analytics</span> Báo cáo
                 </a>
+                <a href="${pageContext.request.contextPath}/policies" class="bk-sidebar-link ${_cp == '/policies' ? 'active' : ''}">
+                    <span class="material-symbols-outlined">settings_suggest</span> Cấu hình chính sách
+                </a>
             </c:if>
             
             <c:if test="${sessionScope.currentUser.role == 'ADMIN'}">
