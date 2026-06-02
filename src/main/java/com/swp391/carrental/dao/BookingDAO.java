@@ -19,6 +19,9 @@ import java.util.List;
  */
 public class BookingDAO {
 
+    /**
+     * Find a booking by its ID.
+     */
     public Booking findById(int bookingId) throws SQLException {
         String sql = "SELECT * FROM bookings WHERE booking_id = ?";
         try (Connection conn = DBContext.getConnection();
@@ -31,6 +34,9 @@ public class BookingDAO {
         return null;
     }
 
+    /**
+     * Get all bookings ordered by creation date.
+     */
     public List<Booking> findAll() throws SQLException {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings ORDER BY created_at DESC";
@@ -42,6 +48,9 @@ public class BookingDAO {
         return bookings;
     }
 
+    /**
+     * Get all bookings for a specific customer.
+     */
     public List<Booking> findByCustomerId(int customerId) throws SQLException {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE customer_id = ? ORDER BY created_at DESC";
@@ -55,6 +64,9 @@ public class BookingDAO {
         return bookings;
     }
 
+    /**
+     * Get bookings filtered by their status.
+     */
     public List<Booking> findByStatus(String status) throws SQLException {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE status = ? ORDER BY created_at DESC";
@@ -93,6 +105,9 @@ public class BookingDAO {
         return false;
     }
 
+    /**
+     * Insert a new booking into the database.
+     */
     public int insert(Booking booking) throws SQLException {
         String sql = "INSERT INTO bookings (customer_id, car_id, start_date, end_date, pickup_location, "
                    + "return_location, total_amount, deposit_amount, status, notes) "
@@ -117,6 +132,9 @@ public class BookingDAO {
         return -1;
     }
 
+    /**
+     * Update an existing booking in the database.
+     */
     public boolean update(Booking booking) throws SQLException {
         String sql = "UPDATE bookings SET car_id = ?, start_date = ?, end_date = ?, pickup_location = ?, "
                    + "return_location = ?, total_amount = ?, deposit_amount = ?, status = ?, notes = ?, "
@@ -137,6 +155,9 @@ public class BookingDAO {
         }
     }
 
+    /**
+     * Update the status of a specific booking.
+     */
     public boolean updateStatus(int bookingId, String status) throws SQLException {
         String sql = "UPDATE bookings SET status = ?, updated_at = GETDATE() WHERE booking_id = ?";
         try (Connection conn = DBContext.getConnection();
@@ -147,6 +168,9 @@ public class BookingDAO {
         }
     }
 
+    /**
+     * Approve a booking and record the staff member ID.
+     */
     public boolean approve(int bookingId, int approvedBy) throws SQLException {
         String sql = "UPDATE bookings SET status = 'CONFIRMED', approved_by = ?, approved_at = GETDATE(), "
                    + "updated_at = GETDATE() WHERE booking_id = ?";
@@ -158,6 +182,9 @@ public class BookingDAO {
         }
     }
 
+    /**
+     * Reject a booking with a reason and the staff member ID.
+     */
     public boolean reject(int bookingId, int rejectedBy, String reason) throws SQLException {
         String sql = "UPDATE bookings SET status = 'REJECTED', approved_by = ?, cancel_reason = ?, "
                    + "updated_at = GETDATE() WHERE booking_id = ?";
@@ -184,6 +211,9 @@ public class BookingDAO {
         }
     }
 
+    /**
+     * Delete a booking by its ID.
+     */
     public boolean delete(int bookingId) throws SQLException {
         String sql = "DELETE FROM bookings WHERE booking_id = ?";
         try (Connection conn = DBContext.getConnection();
@@ -193,6 +223,9 @@ public class BookingDAO {
         }
     }
 
+    /**
+     * Map a ResultSet row to a Booking object.
+     */
     private Booking mapRow(ResultSet rs) throws SQLException {
         Booking b = new Booking();
         b.setBookingId(rs.getInt("booking_id"));
