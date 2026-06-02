@@ -124,6 +124,9 @@ public class BookingService {
         }
     }
 
+    /**
+     * Update an existing booking.
+     */
     public boolean updateBooking(Booking booking) {
         try {
             // BR-01: Validate dates
