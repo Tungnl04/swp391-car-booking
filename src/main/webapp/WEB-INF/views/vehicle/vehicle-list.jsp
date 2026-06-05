@@ -165,8 +165,8 @@
                             <span class="material-symbols-outlined" style="font-size:20px;color:var(--primary);display:block;">settings</span>
                             <div style="font-size:12px;font-weight:600;margin-top:4px;">
                                 <c:choose>
-                                    <c:when test="${car.transmission == 'AUTOMATIC'}">Xự Động</c:when>
-                                    <c:when test="${car.transmission == 'MANUAL'}">Xử Sàn</c:when>
+                                    <c:when test="${car.transmission == 'AUTOMATIC'}">Tự Động</c:when>
+                                    <c:when test="${car.transmission == 'MANUAL'}">Số Sàn</c:when>
                                     <c:otherwise>${car.transmission}</c:otherwise>
                                 </c:choose>
                             </div>
