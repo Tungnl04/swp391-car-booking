@@ -37,7 +37,13 @@
                             <td>${car.model}</td>
                             <td>${car.year}</td>
                             <td>${car.seats}</td>
-                            <td>${car.transmission}</td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${car.transmission == 'AUTOMATIC'}">Tự Động</c:when>
+                                    <c:when test="${car.transmission == 'MANUAL'}">Số Sàn</c:when>
+                                    <c:otherwise>${car.transmission}</c:otherwise>
+                                </c:choose>
+                            </td>
                             <td><fmt:formatNumber value="${car.dailyRate}" type="number" groupingUsed="true"/> VNĐ</td>
                             <td><a href="${pageContext.request.contextPath}/vehicles/detail?id=${car.carId}" class="btn btn-primary" style="padding:4px 12px;font-size:13px;">Chi tiết</a></td>
                         </tr>

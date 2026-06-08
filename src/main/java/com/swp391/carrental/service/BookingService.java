@@ -29,9 +29,7 @@ public class BookingService {
     private final BookingDAO bookingDAO = new BookingDAO();
     private final CarDAO carDAO = new CarDAO();
 
-    /**
-     * Get a single booking by ID.
-     */
+    /** Get a single booking by ID */
     public Booking getBookingById(int bookingId) {
         try {
             return bookingDAO.findById(bookingId);
@@ -40,9 +38,7 @@ public class BookingService {
         }
     }
 
-    /**
-     * Get all bookings (Staff/Admin).
-     */
+    /** Get all bookings in the system */
     public List<Booking> getAllBookings() {
         try {
             return bookingDAO.findAll();
@@ -51,9 +47,7 @@ public class BookingService {
         }
     }
 
-    /**
-     * Get bookings for a specific customer.
-     */
+    /** Get bookings for a specific customer */
     public List<Booking> getBookingsByCustomer(int customerId) {
         try {
             return bookingDAO.findByCustomerId(customerId);
@@ -62,9 +56,7 @@ public class BookingService {
         }
     }
 
-    /**
-     * Get bookings filtered by status.
-     */
+    /** Get bookings filtered by status */
     public List<Booking> getBookingsByStatus(String status) {
         try {
             return bookingDAO.findByStatus(status);
@@ -73,12 +65,7 @@ public class BookingService {
         }
     }
 
-    /**
-     * Create a new booking.
-     * BR-01: End date must be after or equal to start date.
-     * BR-02: No overlapping Pending/Confirmed/InProgress bookings.
-     * BR-09: Car with Maintenance/Inactive/Rented status cannot be booked.
-     */
+    /** Create a new booking with date, car status, and overlapping checks */
     public int createBooking(Booking booking) {
         try {
             // BR-01: Validate dates
@@ -195,7 +182,7 @@ public class BookingService {
             boolean approved = bookingDAO.approve(bookingId, approvedBy);
             
             if (approved) {
-                // Tự động tạo Hợp đồng khi duyệt booking thành công (BR-05)
+                // Auto generate contract
                 try {
                     com.swp391.carrental.dao.ContractDAO contractDAO = new com.swp391.carrental.dao.ContractDAO();
                     if (contractDAO.findByBookingId(bookingId) == null) {

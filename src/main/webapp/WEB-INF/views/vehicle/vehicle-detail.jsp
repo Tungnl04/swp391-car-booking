@@ -154,11 +154,21 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="material-symbols-outlined" style="color: var(--secondary); font-size: 20px;">settings</span>
-                    ${car.transmission}
+                    <c:choose>
+                        <c:when test="${car.transmission == 'AUTOMATIC'}">Tự Động</c:when>
+                        <c:when test="${car.transmission == 'MANUAL'}">Số Sàn</c:when>
+                        <c:otherwise>${car.transmission}</c:otherwise>
+                    </c:choose>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="material-symbols-outlined" style="color: var(--secondary); font-size: 20px;">local_gas_station</span>
-                    ${car.fuelType}
+                    <c:choose>
+                        <c:when test="${car.fuelType == 'GASOLINE'}">Xăng</c:when>
+                        <c:when test="${car.fuelType == 'DIESEL'}">Dầu Diesel</c:when>
+                        <c:when test="${car.fuelType == 'ELECTRIC'}">Điện</c:when>
+                        <c:when test="${car.fuelType == 'HYBRID'}">Hybrid</c:when>
+                        <c:otherwise>${car.fuelType}</c:otherwise>
+                    </c:choose>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span class="material-symbols-outlined" style="color: var(--secondary); font-size: 20px;">ac_unit</span>

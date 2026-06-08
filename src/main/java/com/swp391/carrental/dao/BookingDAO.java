@@ -19,9 +19,7 @@ import java.util.List;
  */
 public class BookingDAO {
 
-    /**
-     * Find a booking by its ID.
-     */
+    /** Find a booking by its ID */
     public Booking findById(int bookingId) throws SQLException {
         String sql = "SELECT * FROM bookings WHERE booking_id = ?";
         try (Connection conn = DBContext.getConnection();
@@ -34,9 +32,7 @@ public class BookingDAO {
         return null;
     }
 
-    /**
-     * Get all bookings ordered by creation date.
-     */
+    /** Get all bookings ordered by creation date */
     public List<Booking> findAll() throws SQLException {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings ORDER BY created_at DESC";
@@ -48,9 +44,7 @@ public class BookingDAO {
         return bookings;
     }
 
-    /**
-     * Get all bookings for a specific customer.
-     */
+    /** Get bookings for a specific customer ID */
     public List<Booking> findByCustomerId(int customerId) throws SQLException {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE customer_id = ? ORDER BY created_at DESC";
@@ -64,9 +58,7 @@ public class BookingDAO {
         return bookings;
     }
 
-    /**
-     * Get bookings filtered by their status.
-     */
+    /** Get bookings filtered by status */
     public List<Booking> findByStatus(String status) throws SQLException {
         List<Booking> bookings = new ArrayList<>();
         String sql = "SELECT * FROM bookings WHERE status = ? ORDER BY created_at DESC";
@@ -80,9 +72,7 @@ public class BookingDAO {
         return bookings;
     }
 
-    /**
-     * Check for overlapping bookings (BR-02).
-     */
+    /** Check if a car has any overlapping active bookings in a given time range */
     public boolean hasOverlappingBooking(int carId, Timestamp startDate, Timestamp endDate, Integer excludeBookingId) throws SQLException {
         String sql = "SELECT COUNT(*) FROM bookings WHERE car_id = ? "
                    + "AND status IN ('PENDING', 'CONFIRMED', 'IN_PROGRESS') "
@@ -105,9 +95,7 @@ public class BookingDAO {
         return false;
     }
 
-    /**
-     * Insert a new booking into the database.
-     */
+    /** Insert a new booking into the database and return the generated ID */
     public int insert(Booking booking) throws SQLException {
         String sql = "INSERT INTO bookings (customer_id, car_id, start_date, end_date, pickup_location, "
                    + "return_location, total_amount, deposit_amount, status, notes) "
