@@ -43,6 +43,7 @@
                         <th>Mức xăng</th>
                         <th>Tình trạng ngoại thất</th>
                         <th>Nhân viên bàn giao</th>
+                        <th>Trạng thái</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
@@ -69,6 +70,10 @@
                                 </div>
                             </td>
                             <td>Nhân viên #${h.handedBy}</td>
+                            <td>
+                                <span class="bk-badge bk-badge-confirmed" style="background:var(--success-container);color:var(--on-success-container);">
+                                    ${h.status}
+                            </td>
                             <td>
                                 <a href="${pageContext.request.contextPath}/handovers/detail?bookingId=${h.bookingId}&carId=${h.carId}" class="bk-btn bk-btn-sm bk-btn-primary">Xem</a>
                             </td>

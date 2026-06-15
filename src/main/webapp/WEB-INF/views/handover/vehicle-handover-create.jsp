@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <jsp:include page="/WEB-INF/views/layout/header.jsp">
-    <jsp:param name="pageTitle" value="Bàn Giao Xe & Nhận Chìa Khóa"/>
+    <jsp:param name="pageTitle" value="Tạo Biên Bản Bàn Giao Xe"/>
 </jsp:include>
 
 <style>
@@ -60,7 +60,7 @@
             <span class="material-symbols-outlined">chevron_right</span>
             <span class="current">Tạo biên bản mới</span>
         </div>
-        <h2>Bàn Giao Xe & Ký Nhận</h2>
+        <h2>Biên bản Bàn giao xe</h2>
         <p>Ghi nhận chỉ số thực tế (số km, mức xăng) và danh mục kiểm tra an toàn trước khi trao chìa khóa xe cho khách thuê. (BR-06)</p>
     </div>
 </div>
