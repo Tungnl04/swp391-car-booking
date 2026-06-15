@@ -4,6 +4,7 @@ import com.swp391.carrental.dao.*;
 import com.swp391.carrental.model.*;
 import com.swp391.carrental.service.HandoverService;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,20 +15,19 @@ import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
-@WebServlet(name = "VehicleHandoverCreateServlet", urlPatterns = {"/handovers/create"})
+@WebServlet(name = "VehicleHandoverDetailServlet", urlPatterns = {"/handovers/detail"})
 @MultipartConfig(
         fileSizeThreshold = 1024 * 1024 * 1,
         maxFileSize = 1024 * 1024 * 10,
         maxRequestSize = 1024 * 1024 * 15
 )
 
-public class VehicleHandoverCreateServlet extends HttpServlet {
+public class VehicleHandoverDetailServlet extends HttpServlet {
 
     private final HandoverService handoverService = new HandoverService();
     private final HandoverDAO handoverDAO = new HandoverDAO();
@@ -50,10 +50,19 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
                 Booking booking = bookingDAO.findById(bookingId);
                 Car car = carDAO.findById(carId);
                 RentalContract contract = contractDAO.findByBookingId(bookingId);
+                VehicleHandover handover = handoverDAO.findByBookingId(bookingId);
+
+                // DEBUG - xóa sau khi fix
+                System.out.println("=== DEBUG DETAIL ===");
+                System.out.println("bookingId: " + bookingId + ", carId: " + carId);
+                System.out.println("booking: " + booking);
+                System.out.println("car: " + car);
+                System.out.println("handover: " + handover);
 
                 request.setAttribute("booking", booking);
                 request.setAttribute("car", car);
                 request.setAttribute("contract", contract);
+                request.setAttribute("handover", handover);
                 request.setAttribute("bookingId", bookingId);
                 request.setAttribute("carId", carId);
 
@@ -63,106 +72,124 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace(); // DEBUG
             request.setAttribute("error", "Lỗi tải thông tin: " + e.getMessage());
         }
-        request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-create.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            int bookingId = Integer.parseInt(request.getParameter("bookingId"));
-            int carId = Integer.parseInt(request.getParameter("carId"));
 
-            // ===== VALIDATION =====
-            if (!validateOdo(request, response, bookingId, carId)) {
+        String action = request.getParameter("action");
+
+        if ("delete".equals(action)) {
+            try {
+                int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+
+                VehicleHandover handover = handoverDAO.findByBookingId(bookingId);
+
+                if (handover != null) {
+                    handoverService.deleteHandoverVehicle(handover.getHandoverId());
+                }
+
+                response.sendRedirect(request.getContextPath() + "/handovers");
                 return;
+            } catch (SQLException e) {
+                throw new ServletException(e);
             }
+        }
 
-            if (!validateFuel(request, response, bookingId, carId)) {
-                return;
-            }
+        if ("save".equals(action)) {
+            try {
+                int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+                int carId = Integer.parseInt(request.getParameter("carId"));
 
-            if (!validateImages(request, response, bookingId, carId)) {
-                return;
-            }
+                // ===== VALIDATION =====
+                if (!validateOdo(request, response, bookingId, carId)) {
+                    return;
+                }
 
-            // ===== FORM DATA =====
-            int mileage = Integer.parseInt(request.getParameter("currentOdo"));
+                if (!validateFuel(request, response, bookingId, carId)) {
+                    return;
+                }
 
-            String fuelLevel = request.getParameter("fuel");
+                if (!validateImages(request, response, bookingId, carId)) {
+                    return;
+                }
 
-            switch (fuelLevel) {
-                case "E":
-                    fuelLevel = "EMPTY";
-                    break;
-                case "F":
+                // ===== GET EXISTING HANDOVER =====
+                VehicleHandover handover = handoverDAO.findByBookingId(bookingId);
+
+                if (handover == null) {
+                    request.setAttribute("error", "Không tìm thấy bản ghi bàn giao để cập nhật.");
+                    request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
+                    return;
+                }
+
+                // ===== FORM DATA =====
+                int mileage = Integer.parseInt(request.getParameter("currentOdo"));
+
+                String fuelLevel = request.getParameter("fuel");
+                if ("F".equals(fuelLevel)) {
                     fuelLevel = "FULL";
-                    break;
+                } else if ("E".equals(fuelLevel)) {
+                    fuelLevel = "EMPTY";
+                }
+
+                String notes = request.getParameter("notes");
+                if (notes == null || notes.isBlank()) {
+                    notes = "Đã kiểm tra và bàn giao xe";
+                }
+
+                String exterior = buildExteriorCondition(request);
+                String interior = buildInteriorCondition(request);
+                String accessories = buildMechanicalCondition(request);
+
+                String newPhotos = saveImages(request, bookingId);
+                String remainingPhotos = request.getParameter("remainingPhotos");
+
+                String finalPhotos = "";
+                if (remainingPhotos != null && !remainingPhotos.isEmpty()) {
+                    finalPhotos = remainingPhotos;
+                }
+
+                if (newPhotos != null && !newPhotos.isEmpty()) {
+                    if (!finalPhotos.isEmpty()) {
+                        finalPhotos += "," + newPhotos;
+                    } else {
+                        finalPhotos = newPhotos;
+                    }
+                }
+
+                // ===== UPDATE OBJECT =====
+                handover.setMileageAtHandover(mileage);
+                handover.setFuelLevel(fuelLevel);
+
+                handover.setPhotosUrl(finalPhotos);
+                handover.setNotes(notes);
+
+                handover.setExteriorCondition(exterior);
+                handover.setInteriorCondition(interior);
+                handover.setAccessoriesChecklist(accessories);
+
+                handoverService.updateHandoverVehicle(handover);
+
+                response.sendRedirect(request.getContextPath() + "/handovers");
+                return;
+            } catch (Exception e) {
+                request.setAttribute("error", "Lỗi bàn giao: " + e.getMessage());
+                request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
             }
-
-            String exterior = buildExteriorCondition(request);
-            String interior = buildInteriorCondition(request);
-            String accessories = buildMechanicalCondition(request);
-
-            String notes = request.getParameter("notes");
-
-            if (notes == null || notes.isBlank()) {
-                notes = "Đã kiểm tra và bàn giao xe";
-            }
-
-            // ===== RELATION DATA =====
-            RentalContract contract = contractDAO.findByBookingId(bookingId);
-
-            Integer contractId = contract != null ? contract.getContractId() : null;
-
-            Booking booking = bookingDAO.findById(bookingId);
-
-            int receivedBy = booking != null ? booking.getCustomerId() : null;
-
-            User currentUser = (User) request.getSession().getAttribute("currentUser");
-
-            int handedBy = currentUser != null ? currentUser.getUserId() : null;
-
-            // ===== PHOTOS =====
-            String photosUrl = saveImages(request, bookingId);
-
-            // ===== CREATE ENTITY =====
-            VehicleHandover handover = new VehicleHandover();
-
-            handover.setBookingId(bookingId);
-            handover.setContractId(contractId);
-            handover.setCarId(carId);
-
-            handover.setMileageAtHandover(mileage);
-            handover.setFuelLevel(fuelLevel);
-
-            handover.setExteriorCondition(exterior);
-            handover.setInteriorCondition(interior);
-            handover.setAccessoriesChecklist(accessories);
-
-            handover.setPhotosUrl(photosUrl);
-            handover.setNotes(notes);
-
-            handover.setHandedBy(handedBy);
-            handover.setReceivedBy(receivedBy);
-
-            handover.setHandoverDate(LocalDateTime.now());
-
-            handoverService.handoverVehicle(handover);
-
-            response.sendRedirect(request.getContextPath() + "/handovers");
-
-        } catch (Exception e) {
-            request.setAttribute("error", "Lỗi bàn giao: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-create.jsp").forward(request, response);
         }
     }
 
     private String saveImages(HttpServletRequest request, int bookingId)
             throws IOException, ServletException {
-        String uploadPath = request.getServletContext().getRealPath("") + File.separator + "assets/images/handover";
+
+        String uploadPath = request.getServletContext().getRealPath("")
+                + File.separator + "assets/images/handover";
 
         File folder = new File(uploadPath);
         if (!folder.exists()) {
@@ -172,7 +199,7 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
         List<String> urls = new ArrayList<>();
 
         for (Part part : request.getParts()) {
-            if (!"evidencePhotos".equals(part.getName()) || part.getSize() == 0) {
+            if (part == null || !"evidencePhotos".equals(part.getName()) || part.getSize() <= 0) {
                 continue;
             }
 
@@ -215,9 +242,9 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
         String currentOdo = request.getParameter("currentOdo");
 
         if (currentOdo == null || currentOdo.isBlank()) {
-            loadCreateData(request, bookingId, carId);
+            loadDetailData(request, bookingId, carId);
             request.setAttribute("currentOdoError", "Vui lòng không để trống thông tin");
-            request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-create.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
             return false;
         }
 
@@ -225,9 +252,9 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
         int mileage = Integer.parseInt(currentOdo);
 
         if (mileage < car.getMileage()) {
-            loadCreateData(request, bookingId, carId);
+            loadDetailData(request, bookingId, carId);
             request.setAttribute("currentOdoError", "Vui lòng nhập số km hợp lệ");
-            request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-create.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
             return false;
         }
         return true;
@@ -238,9 +265,9 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
         String fuelLevel = request.getParameter("fuel");
 
         if (fuelLevel == null || fuelLevel.isBlank()) {
-            loadCreateData(request, bookingId, carId);
+            loadDetailData(request, bookingId, carId);
             request.setAttribute("currentFuelLevelError", "Vui lòng chọn mức nhiên liệu");
-            request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-create.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
             return false;
         }
         return true;
@@ -257,31 +284,33 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
             BufferedImage img = ImageIO.read(part.getInputStream());
 
             if (img == null) {
-                loadCreateData(request, bookingId, carId);
+                loadDetailData(request, bookingId, carId);
                 request.setAttribute("uploadPhotosError", "File tải lên không phải ảnh hợp lệ.");
-                request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-create.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
                 return false;
             }
 
             if (img.getWidth() > 800 || img.getHeight() > 400) {
-                loadCreateData(request, bookingId, carId);
+                loadDetailData(request, bookingId, carId);
                 request.setAttribute("error", "Ảnh vượt quá kích thước 800x400px");
-                request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-create.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
                 return false;
             }
         }
         return true;
     }
 
-    private void loadCreateData(HttpServletRequest request, int bookingId, int carId) {
+    private void loadDetailData(HttpServletRequest request, int bookingId, int carId) {
         try {
             Booking booking = bookingDAO.findById(bookingId);
             Car car = carDAO.findById(carId);
             RentalContract contract = contractDAO.findByBookingId(bookingId);
+            VehicleHandover handover = handoverDAO.findByBookingId(bookingId); // 👈 thêm
 
             request.setAttribute("booking", booking);
             request.setAttribute("car", car);
             request.setAttribute("contract", contract);
+            request.setAttribute("handover", handover); // 👈 thêm
             request.setAttribute("bookingId", bookingId);
             request.setAttribute("carId", carId);
 
@@ -290,24 +319,21 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
                 request.setAttribute("customer", customer);
             }
 
-            // Giữ lại dữ liệu form
+            // Giữ lại dữ liệu form - ghi đè lên handover
             request.setAttribute("currentOdo", request.getParameter("currentOdo"));
             request.setAttribute("fuel", request.getParameter("fuel"));
-
             request.setAttribute("notes", request.getParameter("notes"));
-
             request.setAttribute("chkExteriorScratch", request.getParameter("chkExteriorScratch") != null);
             request.setAttribute("chkWindshield", request.getParameter("chkWindshield") != null);
             request.setAttribute("chkTires", request.getParameter("chkTires") != null);
-
             request.setAttribute("chkCleanliness", request.getParameter("chkCleanliness") != null);
             request.setAttribute("chkOdor", request.getParameter("chkOdor") != null);
             request.setAttribute("chkMatsAccessories", request.getParameter("chkMatsAccessories") != null);
-
             request.setAttribute("chkEngine", request.getParameter("chkEngine") != null);
             request.setAttribute("chkDashboardLights", request.getParameter("chkDashboardLights") != null);
+
         } catch (SQLException ex) {
-            Logger.getLogger(VehicleHandoverCreateServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VehicleHandoverDetailServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

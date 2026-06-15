@@ -19,8 +19,8 @@ import java.sql.SQLException;
 import java.util.List;
 
 /**
- * Service for vehicle handover operations.
- * BR-06: Car becomes Rented after handover.
+ * Service for vehicle handover operations. BR-06: Car becomes Rented after
+ * handover.
  */
 public class HandoverService {
 
@@ -53,8 +53,7 @@ public class HandoverService {
     }
 
     /**
-     * Record vehicle handover.
-     * BR-06: Car becomes Rented after handover.
+     * Record vehicle handover. BR-06: Car becomes Rented after handover.
      */
     public int handoverVehicle(VehicleHandover handover) {
         try {
@@ -69,6 +68,22 @@ public class HandoverService {
             return handoverId;
         } catch (SQLException e) {
             throw new AppException("Failed to record vehicle handover.", e);
+        }
+    }
+
+    public void updateHandoverVehicle(VehicleHandover handover) {
+        try {
+            handoverDAO.update(handover);
+        } catch (SQLException e) {
+            throw new AppException("Failed to update vehicle handover.", e);
+        }
+    }
+
+    public void deleteHandoverVehicle(int handoverId) {
+        try {
+            handoverDAO.delete(handoverId);
+        } catch (SQLException e) {
+            throw new AppException("Failed to delete vehicle handover.", e);
         }
     }
 }
