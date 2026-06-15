@@ -220,6 +220,7 @@ CREATE TABLE vehicle_handovers (
     photos_url      NVARCHAR(MAX)   NULL,
     notes           NVARCHAR(MAX)   NULL,
     handed_by       INT             NOT NULL,   -- staff who performed handover
+    status          NVARCHAR(MAX)   NOT NULL DEFAULT N'CHƯA KÝ NHẬN', --CẦN CHỈNH SỬA, ĐÃ KÝ NHẬN, CHƯA KÝ NHẬN
     received_by     INT             NOT NULL,   -- customer
     created_at      DATETIME2       NOT NULL DEFAULT GETDATE(),
 

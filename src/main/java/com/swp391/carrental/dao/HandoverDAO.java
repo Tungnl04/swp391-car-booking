@@ -56,11 +56,20 @@ public class HandoverDAO {
         return list;
     }
 
+    public boolean updateStatus(int handoverId, String status) throws SQLException {
+        String sql = "UPDATE vehicle_handovers SET status = ? WHERE handover_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, handoverId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
     public int insert(VehicleHandover h) throws SQLException {
         String sql = "INSERT INTO vehicle_handovers (booking_id, contract_id, car_id, handover_date, "
                 + "mileage_at_handover, fuel_level, exterior_condition, interior_condition, "
-                + "accessories_checklist, photos_url, notes, handed_by, received_by) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "accessories_checklist, photos_url, notes, handed_by, received_by, status) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, h.getBookingId());
             if (h.getContractId() != null) {
@@ -79,6 +88,7 @@ public class HandoverDAO {
             ps.setString(11, h.getNotes());
             ps.setInt(12, h.getHandedBy());
             ps.setInt(13, h.getReceivedBy());
+            ps.setString(14, h.getStatus());
             ps.executeUpdate();
             try (ResultSet keys = ps.getGeneratedKeys()) {
                 if (keys.next()) {
@@ -93,7 +103,8 @@ public class HandoverDAO {
 
         String sql = "UPDATE vehicle_handovers SET booking_id=?, contract_id=?, car_id=?, handover_date=?, "
                 + "mileage_at_handover=?, fuel_level=?, exterior_condition=?, interior_condition=?, "
-                + "accessories_checklist=?, photos_url=?, notes=?, handed_by=?, received_by=? WHERE handover_id=?";
+                + "accessories_checklist=?, photos_url=?, notes=?, handed_by=?, received_by=?, status=? "
+                + "WHERE handover_id=?";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -116,7 +127,8 @@ public class HandoverDAO {
             ps.setString(11, h.getNotes());
             ps.setInt(12, h.getHandedBy());
             ps.setInt(13, h.getReceivedBy());
-            ps.setInt(14, h.getHandoverId());
+            ps.setString(14, h.getStatus());
+            ps.setInt(15, h.getHandoverId());
 
             return ps.executeUpdate();
         }
@@ -152,6 +164,7 @@ public class HandoverDAO {
         h.setNotes(rs.getString("notes"));
         h.setHandedBy(rs.getInt("handed_by"));
         h.setReceivedBy(rs.getInt("received_by"));
+        h.setStatus(rs.getString("status"));
         Timestamp ca = rs.getTimestamp("created_at");
         if (ca != null) {
             h.setCreatedAt(ca.toLocalDateTime());

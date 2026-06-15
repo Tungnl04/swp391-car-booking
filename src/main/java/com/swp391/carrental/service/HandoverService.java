@@ -13,6 +13,7 @@ import com.swp391.carrental.dao.CarDAO;
 import com.swp391.carrental.model.VehicleHandover;
 import com.swp391.carrental.constant.BookingStatus;
 import com.swp391.carrental.constant.CarStatus;
+import com.swp391.carrental.constant.HandoverStatus;
 import com.swp391.carrental.exception.AppException;
 
 import java.sql.SQLException;
@@ -65,6 +66,9 @@ public class HandoverService {
             // Update booking status to IN_PROGRESS
             bookingDAO.updateStatus(handover.getBookingId(), BookingStatus.IN_PROGRESS);
 
+            //Update handover status
+            handoverDAO.updateStatus(handoverId, HandoverStatus.IN_PROGRESS);
+
             return handoverId;
         } catch (SQLException e) {
             throw new AppException("Failed to record vehicle handover.", e);
@@ -82,6 +86,22 @@ public class HandoverService {
     public void deleteHandoverVehicle(int handoverId) {
         try {
             handoverDAO.delete(handoverId);
+        } catch (SQLException e) {
+            throw new AppException("Failed to delete vehicle handover.", e);
+        }
+    }
+
+    public void updateStatusConfirm(int handoverId) {
+        try {
+            handoverDAO.updateStatus(handoverId, HandoverStatus.COMPLETED);
+        } catch (SQLException e) {
+            throw new AppException("Failed to delete vehicle handover.", e);
+        }
+    }
+
+    public void updateStatusRequiredUpdate(int handoverId) {
+        try {
+            handoverDAO.updateStatus(handoverId, HandoverStatus.REQUIRED_UPDATE);
         } catch (SQLException e) {
             throw new AppException("Failed to delete vehicle handover.", e);
         }

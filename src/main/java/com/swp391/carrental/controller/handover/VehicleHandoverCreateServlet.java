@@ -112,6 +112,8 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
                 notes = "Đã kiểm tra và bàn giao xe";
             }
 
+            String status = "CHƯA KÝ NHẬN";
+
             // ===== RELATION DATA =====
             RentalContract contract = contractDAO.findByBookingId(bookingId);
 
@@ -144,6 +146,7 @@ public class VehicleHandoverCreateServlet extends HttpServlet {
 
             handover.setPhotosUrl(photosUrl);
             handover.setNotes(notes);
+            handover.setStatus(status);
 
             handover.setHandedBy(handedBy);
             handover.setReceivedBy(receivedBy);

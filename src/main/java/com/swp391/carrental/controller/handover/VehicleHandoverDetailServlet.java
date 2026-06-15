@@ -6,7 +6,6 @@ import com.swp391.carrental.service.HandoverService;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,13 +51,6 @@ public class VehicleHandoverDetailServlet extends HttpServlet {
                 RentalContract contract = contractDAO.findByBookingId(bookingId);
                 VehicleHandover handover = handoverDAO.findByBookingId(bookingId);
 
-                // DEBUG - xóa sau khi fix
-                System.out.println("=== DEBUG DETAIL ===");
-                System.out.println("bookingId: " + bookingId + ", carId: " + carId);
-                System.out.println("booking: " + booking);
-                System.out.println("car: " + car);
-                System.out.println("handover: " + handover);
-
                 request.setAttribute("booking", booking);
                 request.setAttribute("car", car);
                 request.setAttribute("contract", contract);
@@ -72,7 +64,7 @@ public class VehicleHandoverDetailServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace(); // DEBUG
+            e.printStackTrace();
             request.setAttribute("error", "Lỗi tải thông tin: " + e.getMessage());
         }
         request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
@@ -305,12 +297,12 @@ public class VehicleHandoverDetailServlet extends HttpServlet {
             Booking booking = bookingDAO.findById(bookingId);
             Car car = carDAO.findById(carId);
             RentalContract contract = contractDAO.findByBookingId(bookingId);
-            VehicleHandover handover = handoverDAO.findByBookingId(bookingId); // 👈 thêm
+            VehicleHandover handover = handoverDAO.findByBookingId(bookingId);
 
             request.setAttribute("booking", booking);
             request.setAttribute("car", car);
             request.setAttribute("contract", contract);
-            request.setAttribute("handover", handover); // 👈 thêm
+            request.setAttribute("handover", handover);
             request.setAttribute("bookingId", bookingId);
             request.setAttribute("carId", carId);
 
