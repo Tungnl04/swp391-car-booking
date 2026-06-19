@@ -29,6 +29,7 @@ public class VehicleHandover {
     private String notes;
     private int handedBy;
     private int receivedBy;
+    private String status;
     private LocalDateTime createdAt;
 
     public VehicleHandover() {
@@ -77,6 +78,9 @@ public class VehicleHandover {
 
     public int getReceivedBy() { return receivedBy; }
     public void setReceivedBy(int receivedBy) { this.receivedBy = receivedBy; }
+    
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
