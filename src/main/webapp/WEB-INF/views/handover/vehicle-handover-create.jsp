@@ -268,7 +268,7 @@
                     <div id="uploadPhotosError" style="color:red; margin-top:8px;"></div>
                     <span class="material-symbols-outlined" style="font-size: 42px; color: var(--text-secondary);">upload_file</span>
                     <p style="font-weight: 700; color: var(--primary); margin-top: 8px; font-size: 14px;">Nhấp để tải lên hoặc kéo và thả</p>
-                    <p style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">SVG, PNG, JPG hoặc GIF (tối đa 800x400px)</p>
+                    <p style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Định dạng SVG, PNG, JPG hoặc GIF (Tối đa 10MB)</p>
                 </div>
                 <div id="imagePreviewContainer" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:16px;"></div>
                 <c:if test="${not empty handover.photosUrl}">
@@ -326,25 +326,21 @@
         const previewContainer = document.getElementById("imagePreviewContainer");
         let allFiles = [];
 
-        fileInput.addEventListener("change", async function () {
+        fileInput.addEventListener("change", function () {
             const errorDiv = document.getElementById("uploadPhotosError");
             errorDiv.innerHTML = "";
             for (const file of Array.from(this.files)) {
-                if (!file.type.startsWith("image/"))
+                if (!file.type.startsWith("image/")) {
+                    errorDiv.innerHTML += file.name + " không phải là tệp ảnh hợp lệ.<br>";
                     continue;
-                const img = new Image();
-                const result = await new Promise((resolve) => {
-                    img.onload = () => resolve(img.width <= 800 && img.height <= 400);
-                    img.onerror = () => resolve(false);
-                    img.src = URL.createObjectURL(file);
-                });
-                if (result) {
-                    allFiles.push(file);
-                    renderPreviews();
-                } else {
-                    errorDiv.innerHTML += file.name + " vượt quá kích thước (800x400px)<br>";
                 }
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    errorDiv.innerHTML += file.name + " vượt quá dung lượng cho phép (10MB).<br>";
+                    continue;
+                }
+                allFiles.push(file);
             }
+            renderPreviews();
             updateInputFiles();
         });
 

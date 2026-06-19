@@ -33,15 +33,15 @@
                 <span class="material-symbols-outlined">assignment</span> Chi tiết Đặt xe
             </div>
 
-            <form method="post" action="${pageContext.request.contextPath}/bookings/create" id="bookingForm">
+            <form method="post" action="${pageContext.request.contextPath}/bookings/create" id="bookingForm" novalidate>
 
                 <%-- Car Selection --%>
                 <div class="bk-form-section" style="margin-bottom:24px;">
                     <div class="bk-form-group">
-                        <label class="bk-form-label">Chọn xe</label>
+                        <label class="bk-form-label">Chọn xe <span style="color:var(--error);">*</span></label>
                         <div class="bk-form-input-wrap">
                             <span class="material-symbols-outlined">directions_car</span>
-                            <select name="carId" id="carSelect" class="bk-form-select" required onchange="updateCarInfo()">
+                            <select name="carId" id="carSelect" class="bk-form-select" onchange="updateCarInfo()">
                                 <option value="">-- Chọn xe --</option>
                                 <c:forEach var="car" items="${cars}">
                                     <option value="${car.carId}"
@@ -49,6 +49,7 @@
                                             data-model="${car.model}"
                                             data-plate="${car.licensePlate}"
                                             data-price="${car.dailyRate}"
+                                            data-location="${car.location}"
                                             data-image="${primaryImages[car.carId]}"
                                             ${selectedCarId == car.carId ? 'selected' : ''}>
                                         ${car.brand} ${car.model} — ${car.licensePlate}
@@ -56,6 +57,7 @@
                                 </c:forEach>
                             </select>
                         </div>
+                        <span class="error-msg" style="color:var(--error);font-size:12px;margin-top:4px;display:none;" id="err-carId"></span>
                     </div>
                 </div>
 
@@ -66,32 +68,36 @@
                     <h3>Lịch trình</h3>
                     <div class="bk-form-grid">
                         <div class="bk-form-group">
-                            <label class="bk-form-label">Ngày bắt đầu</label>
+                            <label class="bk-form-label">Ngày bắt đầu <span style="color:var(--error);">*</span></label>
                             <div class="bk-form-input-wrap">
                                 <span class="material-symbols-outlined">calendar_month</span>
-                                <input type="date" name="startDate" id="startDate" class="bk-form-input" required onchange="calculateBookingCost()">
+                                <input type="date" name="startDate" id="startDate" class="bk-form-input" onchange="calculateBookingCost()">
                             </div>
+                            <span class="error-msg" style="color:var(--error);font-size:12px;margin-top:4px;display:none;" id="err-startDate"></span>
                         </div>
                         <div class="bk-form-group">
-                            <label class="bk-form-label">Giờ bắt đầu</label>
+                            <label class="bk-form-label">Giờ bắt đầu <span style="color:var(--error);">*</span></label>
                             <div class="bk-form-input-wrap">
                                 <span class="material-symbols-outlined">schedule</span>
-                                <input type="time" name="startTime" id="startTime" class="bk-form-input" value="08:00" required>
+                                <input type="time" name="startTime" id="startTime" class="bk-form-input" value="08:00">
                             </div>
+                            <span class="error-msg" style="color:var(--error);font-size:12px;margin-top:4px;display:none;" id="err-startTime"></span>
                         </div>
                         <div class="bk-form-group">
-                            <label class="bk-form-label">Ngày kết thúc</label>
+                            <label class="bk-form-label">Ngày kết thúc <span style="color:var(--error);">*</span></label>
                             <div class="bk-form-input-wrap">
                                 <span class="material-symbols-outlined">event</span>
-                                <input type="date" name="endDate" id="endDate" class="bk-form-input" required onchange="calculateBookingCost()">
+                                <input type="date" name="endDate" id="endDate" class="bk-form-input" onchange="calculateBookingCost()">
                             </div>
+                            <span class="error-msg" style="color:var(--error);font-size:12px;margin-top:4px;display:none;" id="err-endDate"></span>
                         </div>
                         <div class="bk-form-group">
-                            <label class="bk-form-label">Giờ kết thúc</label>
+                            <label class="bk-form-label">Giờ kết thúc <span style="color:var(--error);">*</span></label>
                             <div class="bk-form-input-wrap">
                                 <span class="material-symbols-outlined">schedule</span>
-                                <input type="time" name="endTime" id="endTime" class="bk-form-input" value="08:00" required>
+                                <input type="time" name="endTime" id="endTime" class="bk-form-input" value="08:00">
                             </div>
+                            <span class="error-msg" style="color:var(--error);font-size:12px;margin-top:4px;display:none;" id="err-endTime"></span>
                         </div>
                     </div>
                 </div>
@@ -101,18 +107,20 @@
                     <h3>Địa điểm</h3>
                     <div class="bk-form-grid">
                         <div class="bk-form-group">
-                            <label class="bk-form-label">Điểm nhận xe</label>
+                            <label class="bk-form-label">Điểm nhận xe <span style="color:var(--error);">*</span></label>
                             <div class="bk-form-input-wrap">
                                 <span class="material-symbols-outlined">location_on</span>
-                                <input type="text" name="pickupLocation" class="bk-form-input" placeholder="Văn phòng chính" required>
+                                <input type="text" name="pickupLocation" id="pickupLocation" class="bk-form-input" placeholder="Nhập địa điểm nhận xe">
                             </div>
+                            <span class="error-msg" style="color:var(--error);font-size:12px;margin-top:4px;display:none;" id="err-pickupLocation"></span>
                         </div>
                         <div class="bk-form-group">
-                            <label class="bk-form-label">Điểm trả xe</label>
+                            <label class="bk-form-label">Điểm trả xe <span style="color:var(--error);">*</span></label>
                             <div class="bk-form-input-wrap">
                                 <span class="material-symbols-outlined">pin_drop</span>
-                                <input type="text" name="returnLocation" class="bk-form-input" placeholder="Văn phòng chính" required>
+                                <input type="text" name="returnLocation" id="returnLocation" class="bk-form-input" placeholder="Nhập địa điểm trả xe">
                             </div>
+                            <span class="error-msg" style="color:var(--error);font-size:12px;margin-top:4px;display:none;" id="err-returnLocation"></span>
                         </div>
                     </div>
                 </div>
@@ -196,8 +204,13 @@ function updateCarInfo() {
     var model = opt.getAttribute('data-model');
     var plate = opt.getAttribute('data-plate');
     var price = parseFloat(opt.getAttribute('data-price')) || 0;
+    var location = opt.getAttribute('data-location') || 'Văn phòng chính';
     var imgUrl = opt.getAttribute('data-image') || '/assets/images/cars/placeholder.jpg';
     var contextPath = '${pageContext.request.contextPath}';
+    
+    // Auto-fill and keep pickup and return location flexible
+    document.getElementById('pickupLocation').value = location;
+    document.getElementById('returnLocation').value = location;
     
     info.innerHTML =
         '<div style="width:100%;height:140px;background:var(--surface-container-high);border-radius:8px;overflow:hidden;margin-bottom:12px;display:flex;align-items:center;justify-content:center;box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.05);">' +
@@ -276,6 +289,99 @@ document.addEventListener('DOMContentLoaded', function() {
     var today = new Date().toISOString().split('T')[0];
     if (sd) sd.setAttribute('min', today);
     if (ed) ed.setAttribute('min', today);
+    
+    // Custom form validation
+    var form = document.getElementById('bookingForm');
+    if (form) {
+        form.addEventListener('submit', function(event) {
+            var hasErrors = false;
+            
+            // Helper function to show error
+            function showError(id, msg) {
+                var el = document.getElementById('err-' + id);
+                if (el) {
+                    el.textContent = msg;
+                    el.style.display = 'block';
+                }
+                hasErrors = true;
+            }
+            
+            // Clear previous errors
+            var errElements = document.querySelectorAll('.error-msg');
+            errElements.forEach(function(el) {
+                el.textContent = '';
+                el.style.display = 'none';
+            });
+            
+            // Validate Car
+            var carVal = document.getElementById('carSelect').value;
+            if (!carVal) {
+                showError('carId', 'Vui lòng chọn xe.');
+            }
+            
+            // Validate Start Date
+            var sdVal = document.getElementById('startDate').value;
+            if (!sdVal) {
+                showError('startDate', 'Vui lòng chọn ngày bắt đầu.');
+            }
+            
+            // Validate Start Time
+            var stVal = document.getElementById('startTime').value;
+            if (!stVal) {
+                showError('startTime', 'Vui lòng chọn giờ bắt đầu.');
+            }
+            
+            // Validate End Date
+            var edVal = document.getElementById('endDate').value;
+            if (!edVal) {
+                showError('endDate', 'Vui lòng chọn ngày kết thúc.');
+            }
+            
+            // Validate End Time
+            var etVal = document.getElementById('endTime').value;
+            if (!etVal) {
+                showError('endTime', 'Vui lòng chọn giờ kết thúc.');
+            }
+            
+            // Validate Pickup Location
+            var plVal = document.getElementById('pickupLocation').value.trim();
+            if (!plVal) {
+                showError('pickupLocation', 'Vui lòng nhập điểm nhận xe.');
+            }
+            
+            // Validate Return Location
+            var rlVal = document.getElementById('returnLocation').value.trim();
+            if (!rlVal) {
+                showError('returnLocation', 'Vui lòng nhập điểm trả xe.');
+            }
+            
+            // Date validations if both dates are entered
+            if (sdVal && edVal) {
+                var todayDateStr = new Date().toISOString().split('T')[0];
+                if (sdVal < todayDateStr) {
+                    showError('startDate', 'Ngày bắt đầu không được ở quá khứ.');
+                }
+                
+                if (edVal < sdVal) {
+                    showError('endDate', 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.');
+                } else if (edVal === sdVal && stVal && etVal) {
+                    if (etVal <= stVal) {
+                        showError('endTime', 'Giờ kết thúc phải lớn hơn giờ bắt đầu khi chọn cùng ngày.');
+                    }
+                }
+            }
+            
+            if (hasErrors) {
+                event.preventDefault(); // Prevent form submission
+                
+                // Scroll to the first error
+                var firstError = document.querySelector('.error-msg[style*="display: block"]');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    }
 });
 </script>
 
