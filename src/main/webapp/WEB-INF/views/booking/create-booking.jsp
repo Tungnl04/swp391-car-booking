@@ -538,16 +538,22 @@ function onDeliveryMethodChange() {
     var distGroup = document.getElementById('distanceGroup');
     var addrGroup = document.getElementById('deliveryAddressGroup');
     var pickupInput = document.getElementById('pickupLocation');
+    var pickupGroup = pickupInput.closest('.bk-form-group');
     
     if (deliveryMethod === "DELIVERY") {
         distGroup.style.display = 'block';
         addrGroup.style.display = 'block';
-        pickupInput.readOnly = false;
-        pickupInput.placeholder = "Địa chỉ nhận xe cụ thể (hoặc trùng địa chỉ giao)";
-        pickupInput.value = "";
+        if (pickupGroup) {
+            pickupGroup.style.display = 'none';
+        }
+        // When delivery is active, backend uses deliveryAddress so we can fill pickupLocation with placeholder to satisfy validation
+        pickupInput.value = "Giao xe tận nơi";
     } else {
         distGroup.style.display = 'none';
         addrGroup.style.display = 'none';
+        if (pickupGroup) {
+            pickupGroup.style.display = 'block';
+        }
         pickupInput.readOnly = true;
         
         var sel = document.getElementById('carSelect');

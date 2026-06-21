@@ -61,6 +61,22 @@ public class BookingDAO {
         return bookings;
     }
 
+    /** Get active bookings (PENDING, CONFIRMED, IN_PROGRESS) for a specific car */
+    public List<Booking> findActiveBookingsByCarId(int carId) throws SQLException {
+        List<Booking> bookings = new ArrayList<>();
+        String sql = "SELECT * FROM bookings WHERE car_id = ? "
+                   + "AND status IN ('PENDING', 'CONFIRMED', 'IN_PROGRESS') "
+                   + "ORDER BY start_date ASC";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, carId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) bookings.add(mapRow(rs));
+            }
+        }
+        return bookings;
+    }
+
     /** Get bookings filtered by status */
     public List<Booking> findByStatus(String status) throws SQLException {
         List<Booking> bookings = new ArrayList<>();

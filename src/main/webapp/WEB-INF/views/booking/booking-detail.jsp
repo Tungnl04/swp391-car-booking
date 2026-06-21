@@ -213,6 +213,12 @@
 
 
 
+                <c:if test="${booking.status == 'PENDING'}">
+                    <a href="${pageContext.request.contextPath}/bookings/edit?id=${booking.bookingId}" class="bk-btn bk-btn-outline" style="justify-content:center;background:var(--primary-container);color:var(--on-primary-container);">
+                        <span class="material-symbols-outlined">edit</span> Chỉnh sửa đặt xe
+                    </a>
+                </c:if>
+
                 <c:if test="${booking.status == 'PENDING' || booking.status == 'CONFIRMED'}">
                     <form method="post" action="${pageContext.request.contextPath}/bookings/cancel" style="width:100%;">
                         <input type="hidden" name="bookingId" value="${booking.bookingId}"/>
