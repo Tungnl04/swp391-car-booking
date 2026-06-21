@@ -82,7 +82,7 @@ public class ReturnDAO {
             ps.setString(10, vr.getMechanicalCondition());
             ps.setString(11, vr.getDamageDescription());
             ps.setString(12, vr.getPhotosUrl());
-            ps.setBigDecimal(13, vr.getLateFee());
+            ps.setBigDecimal(13, vr.getLateHours());
             ps.setBigDecimal(14, vr.getExtraKmFee());
             ps.setBigDecimal(15, vr.getDamageFee());
             ps.setBigDecimal(16, vr.getCleaningFee());
@@ -137,7 +137,7 @@ public class ReturnDAO {
             ps.setString(11, vr.getDamageDescription());
             ps.setString(12, vr.getPhotosUrl());
 
-            ps.setBigDecimal(13, vr.getLateFee());
+            ps.setBigDecimal(13, vr.getLateHours());
             ps.setBigDecimal(14, vr.getExtraKmFee());
             ps.setBigDecimal(15, vr.getDamageFee());
             ps.setBigDecimal(16, vr.getCleaningFee());
@@ -186,7 +186,7 @@ public class ReturnDAO {
         v.setMechanicalCondition(rs.getString("mechanical_condition"));
         v.setDamageDescription(rs.getString("damage_description"));
         v.setPhotosUrl(rs.getString("photos_url"));
-        v.setLateFee(rs.getBigDecimal("late_fee"));
+        v.setLateHours(rs.getBigDecimal("late_fee"));
         v.setExtraKmFee(rs.getBigDecimal("extra_km_fee"));
         v.setDamageFee(rs.getBigDecimal("damage_fee"));
         v.setCleaningFee(rs.getBigDecimal("cleaning_fee"));

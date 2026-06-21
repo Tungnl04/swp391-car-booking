@@ -29,7 +29,7 @@ public class VehicleReturn {
     private String mechanicalCondition;
     private String damageDescription;
     private String photosUrl;
-    private BigDecimal lateFee;
+    private BigDecimal lateHours;
     private BigDecimal extraKmFee;
     private BigDecimal damageFee;
     private BigDecimal cleaningFee;
@@ -148,12 +148,12 @@ public class VehicleReturn {
         this.photosUrl = photosUrl;
     }
 
-    public BigDecimal getLateFee() {
-        return lateFee;
+    public BigDecimal getLateHours() {
+        return lateHours;
     }
 
-    public void setLateFee(BigDecimal lateFee) {
-        this.lateFee = lateFee;
+    public void setLateHours(BigDecimal lateHours) {
+        this.lateHours = lateHours;
     }
 
     public BigDecimal getExtraKmFee() {

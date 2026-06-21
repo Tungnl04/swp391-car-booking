@@ -8,12 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import com.swp391.carrental.booking.model.Booking;
-import com.swp391.carrental.contract.dao.ContractDAO;
-import com.swp391.carrental.contract.model.RentalContract;
 import com.swp391.carrental.handover.dao.ReturnDAO;
-import com.swp391.carrental.handover.model.VehicleHandover;
 import com.swp391.carrental.handover.model.VehicleReturn;
-import com.swp391.carrental.handover.service.HandoverService;
 import com.swp391.carrental.handover.service.ReturnService;
 import com.swp391.carrental.user.dao.UserDAO;
 import com.swp391.carrental.user.model.User;
@@ -36,7 +32,6 @@ public class AdditionalFeesServlet extends HttpServlet {
     private final ReturnDAO returnDAO = new ReturnDAO();
     private final BookingDAO bookingDAO = new BookingDAO();
     private final CarDAO carDAO = new CarDAO();
-    private final ContractDAO contractDAO = new ContractDAO();
     private final UserDAO userDAO = new UserDAO();
 
     @Override
@@ -63,14 +58,15 @@ public class AdditionalFeesServlet extends HttpServlet {
                 }
 
                 VehicleReturn returns = returnDAO.findByBookingId(bookingId);
+
                 if (returns != null) {
-                    request.setAttribute("vehicleReturn", returns);
-                    request.setAttribute("lateFee", returns.getLateFee());
+                    request.setAttribute("lateHours", returns.getLateHours());
                     request.setAttribute("extraKmFee", returns.getExtraKmFee());
                     request.setAttribute("damageFee", returns.getDamageFee());
                     request.setAttribute("cleaningFee", returns.getCleaningFee());
                     request.setAttribute("lostItemFee", returns.getLostItemFee());
                     request.setAttribute("totalAdditionalFee", returns.getTotalAdditionalFee());
+                    request.setAttribute("returns", returns);
                 }
             }
         } catch (Exception e) {
@@ -81,32 +77,38 @@ public class AdditionalFeesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("URL = " + request.getRequestURL());
+        System.out.println("QUERY = " + request.getQueryString());
 
+        System.out.println("bookingId = " + request.getParameter("bookingId"));
+        System.out.println("carId = " + request.getParameter("carId"));
         String action = request.getParameter("action");
         if ("save".equals(action)) {
             try {
                 int bookingId = Integer.parseInt(request.getParameter("bookingId"));
+                int carId = Integer.parseInt(request.getParameter("carId"));
+
                 VehicleReturn returns = returnDAO.findByBookingId(bookingId);
 
                 if (returns == null) {
                     throw new ServletException("Return record not found");
                 }
 
-                String lateFeeStr = request.getParameter("lateFee");
+                String lateHoursStr = request.getParameter("lateHours");
                 String extraKmFeeStr = request.getParameter("extraKmFee");
                 String damageFeeStr = request.getParameter("damageFee");
                 String cleaningFeeStr = request.getParameter("cleaningFee");
                 String lostItemFeeStr = request.getParameter("lostItemFee");
                 String totalAdditionalFeeStr = request.getParameter("totalAdditionalFee");
 
-                BigDecimal lateFee = safeBigDecimal(lateFeeStr);
+                BigDecimal lateHours = safeBigDecimal(lateHoursStr);
                 BigDecimal extraKmFee = safeBigDecimal(extraKmFeeStr);
                 BigDecimal damageFee = safeBigDecimal(damageFeeStr);
                 BigDecimal cleaningFee = safeBigDecimal(cleaningFeeStr);
                 BigDecimal lostItemFee = safeBigDecimal(lostItemFeeStr);
                 BigDecimal totalAdditionalFee = safeBigDecimal(totalAdditionalFeeStr);
 
-                returns.setLateFee(lateFee);
+                returns.setLateHours(lateHours);
                 returns.setExtraKmFee(extraKmFee);
                 returns.setDamageFee(damageFee);
                 returns.setCleaningFee(cleaningFee);
@@ -116,7 +118,7 @@ public class AdditionalFeesServlet extends HttpServlet {
                 returnService.updateReturnVehicle(returns);
                 request.getSession().setAttribute("notification", "Đã lưu và áp dụng phụ thu vào đơn hàng!");
 
-                response.sendRedirect(request.getContextPath() + "/returns");
+                response.sendRedirect(request.getContextPath() + "/returns/detail?bookingId=" + bookingId + "&carId=" + carId);
             } catch (SQLException e) {
                 throw new ServletException(e);
             }
