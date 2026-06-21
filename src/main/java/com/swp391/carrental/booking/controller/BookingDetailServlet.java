@@ -36,6 +36,7 @@ public class BookingDetailServlet extends HttpServlet {
     private final BookingService bookingService = new BookingService();
     private final VehicleService vehicleService = new VehicleService();
     private final UserDAO userDAO = new UserDAO();
+    private final com.swp391.carrental.policy.service.PolicyService policyService = new com.swp391.carrental.policy.service.PolicyService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -78,6 +79,7 @@ public class BookingDetailServlet extends HttpServlet {
             Car car = vehicleService.getCarById(booking.getCarId());
             request.setAttribute("booking", booking);
             request.setAttribute("car", car);
+            request.setAttribute("taxRate", policyService.getPolicyValue("TAX_RATE", "10"));
 
             // Calculate rental days for display
             if (booking.getStartDate() != null && booking.getEndDate() != null) {

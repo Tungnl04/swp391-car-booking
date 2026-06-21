@@ -57,31 +57,80 @@
             </c:if>
         </div>
 
-        <%-- Schedule --%>
+        <%-- Schedule & Rental Mode --%>
         <div class="bk-card">
             <div class="bk-card-title">
-                <span class="material-symbols-outlined">calendar_today</span> Lịch trình thuê xe
+                <span class="material-symbols-outlined">calendar_today</span> Thông tin & Lịch trình thuê
             </div>
-            <div class="bk-form-grid">
+            <div class="bk-form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Hình thức thuê</label>
+                    <div style="font-size:15px;font-weight:600;color:var(--primary);padding:8px 0;">
+                        <c:choose>
+                            <c:when test="${booking.rentalMode == 'DAILY'}">Thuê theo ngày</c:when>
+                            <c:when test="${booking.rentalMode == 'TRIP'}">Thuê theo chuyến</c:when>
+                            <c:when test="${booking.rentalMode == 'COMBO'}">
+                                Gói Combo
+                                <c:if test="${booking.pricingPackage == 'COMBO_10_DAYS'}"> 10 ngày (Tết)</c:if>
+                                <c:if test="${booking.pricingPackage == 'COMBO_7_DAYS'}"> 7 ngày (Tuần)</c:if>
+                            </c:when>
+                            <c:otherwise>${booking.rentalMode}</c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Phương thức nhận xe</label>
+                    <div style="font-size:15px;font-weight:600;color:var(--primary);padding:8px 0;">
+                        <c:choose>
+                            <c:when test="${booking.deliveryMethod == 'SHOWROOM'}">Nhận tại showroom</c:when>
+                            <c:when test="${booking.deliveryMethod == 'DELIVERY'}">Giao xe tận nơi</c:when>
+                            <c:otherwise>${booking.deliveryMethod}</c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Hạn mức số KM</label>
+                    <div style="font-size:15px;font-weight:600;color:var(--primary);padding:8px 0;">
+                        <c:choose>
+                            <c:when test="${not empty booking.kmLimit}">${booking.kmLimit} km</c:when>
+                            <c:otherwise>Không giới hạn</c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">KM dự kiến đi</label>
+                    <div style="font-size:15px;font-weight:600;color:var(--primary);padding:8px 0;">
+                        <c:choose>
+                            <c:when test="${not empty booking.estimatedKm}">${booking.estimatedKm} km</c:when>
+                            <c:otherwise>--</c:otherwise>
+                        </c:choose>
+                    </div>
+                </div>
                 <div class="bk-form-group">
                     <label class="bk-form-label">Ngày nhận xe</label>
-                    <div style="font-size:16px;font-weight:600;color:var(--primary);padding:8px 0;">
+                    <div style="font-size:15px;font-weight:600;color:var(--primary);padding:8px 0;">
                         <fmt:formatNumber value="${booking.startDate.dayOfMonth}" pattern="00"/>/<fmt:formatNumber value="${booking.startDate.monthValue}" pattern="00"/>/${booking.startDate.year} <fmt:formatNumber value="${booking.startDate.hour}" pattern="00"/>:<fmt:formatNumber value="${booking.startDate.minute}" pattern="00"/>
                     </div>
                 </div>
                 <div class="bk-form-group">
                     <label class="bk-form-label">Ngày trả xe</label>
-                    <div style="font-size:16px;font-weight:600;color:var(--primary);padding:8px 0;">
+                    <div style="font-size:15px;font-weight:600;color:var(--primary);padding:8px 0;">
                         <fmt:formatNumber value="${booking.endDate.dayOfMonth}" pattern="00"/>/<fmt:formatNumber value="${booking.endDate.monthValue}" pattern="00"/>/${booking.endDate.year} <fmt:formatNumber value="${booking.endDate.hour}" pattern="00"/>:<fmt:formatNumber value="${booking.endDate.minute}" pattern="00"/>
                     </div>
                 </div>
-                <div class="bk-form-group">
-                    <label class="bk-form-label">Điểm nhận xe</label>
-                    <div style="font-size:14px;padding:8px 0;">${not empty booking.pickupLocation ? booking.pickupLocation : 'Văn phòng chính'}</div>
+                <div class="bk-form-group" style="grid-column: 1 / -1;">
+                    <label class="bk-form-label">Địa điểm nhận xe</label>
+                    <div style="font-size:14px;padding:8px 0;font-weight:500;">${not empty booking.pickupLocation ? booking.pickupLocation : 'Showroom chính'}</div>
                 </div>
-                <div class="bk-form-group">
-                    <label class="bk-form-label">Điểm trả xe</label>
-                    <div style="font-size:14px;padding:8px 0;">${not empty booking.returnLocation ? booking.returnLocation : 'Văn phòng chính'}</div>
+                <c:if test="${booking.deliveryMethod == 'DELIVERY' && not empty booking.deliveryAddress}">
+                    <div class="bk-form-group" style="grid-column: 1 / -1;">
+                        <label class="bk-form-label">Địa chỉ giao xe tận nơi</label>
+                        <div style="font-size:14px;padding:8px 0;font-weight:500;color:var(--secondary);">${booking.deliveryAddress} (Khoảng cách: ${booking.deliveryDistance} km)</div>
+                    </div>
+                </c:if>
+                <div class="bk-form-group" style="grid-column: 1 / -1;">
+                    <label class="bk-form-label">Địa điểm trả xe</label>
+                    <div style="font-size:14px;padding:8px 0;font-weight:500;">${not empty booking.returnLocation ? booking.returnLocation : 'Showroom chính'}</div>
                 </div>
             </div>
         </div>
@@ -109,29 +158,48 @@
     <div>
         <div class="bk-cost-card" style="position:sticky;top:96px;">
             <h3><span class="material-symbols-outlined">receipt_long</span> Tóm tắt thanh toán</h3>
-            <c:if test="${not empty rentalDays && not empty car}">
-                <div class="bk-detail-rows">
+            <div class="bk-detail-rows">
+                <div class="bk-detail-row">
+                    <span class="label">Giá thuê cơ bản</span>
+                    <span class="value"><fmt:formatNumber value="${not empty booking.baseAmount ? booking.baseAmount : booking.totalAmount / 1.1}" type="number" groupingUsed="true"/>đ</span>
+                </div>
+                <c:if test="${not empty booking.discountAmount && booking.discountAmount > 0}">
                     <div class="bk-detail-row">
-                        <span class="label">Giá thuê (${rentalDays} ngày)</span>
-                        <span class="value"><fmt:formatNumber value="${car.dailyRate * rentalDays}" type="number" groupingUsed="true"/>đ</span>
+                        <span class="label" style="color:var(--success);">Chiết khấu & Ưu đãi</span>
+                        <span class="value" style="color:var(--success);">-<fmt:formatNumber value="${booking.discountAmount}" type="number" groupingUsed="true"/>đ</span>
                     </div>
+                </c:if>
+                <c:if test="${not empty booking.deliveryFee && booking.deliveryFee > 0}">
                     <div class="bk-detail-row">
-                        <span class="label">Thuế & Phí (10%)</span>
-                        <span class="value"><fmt:formatNumber value="${car.dailyRate * rentalDays * 0.1}" type="number" groupingUsed="true"/>đ</span>
+                        <span class="label">Phí giao xe tận nơi</span>
+                        <span class="value"><fmt:formatNumber value="${booking.deliveryFee}" type="number" groupingUsed="true"/>đ</span>
                     </div>
+                </c:if>
+                <div class="bk-detail-row">
+                    <span class="label">Thuế suất VAT (${not empty taxRate ? taxRate : 10}%)</span>
+                    <span class="value">
+                        <c:choose>
+                            <c:when test="${not empty booking.taxAmount}">
+                                <fmt:formatNumber value="${booking.taxAmount}" type="number" groupingUsed="true"/>đ
+                            </c:when>
+                            <c:otherwise>
+                                <fmt:formatNumber value="${(booking.totalAmount / (1.0 + ((not empty taxRate ? taxRate : 10) / 100.0))) * ((not empty taxRate ? taxRate : 10) / 100.0)}" type="number" groupingUsed="true"/>đ
+                            </c:otherwise>
+                        </c:choose>
+                    </span>
                 </div>
-                <div class="bk-summary-total">
-                    <span class="label">Tổng cộng</span>
-                    <span class="value"><fmt:formatNumber value="${car.dailyRate * rentalDays * 1.1}" type="number" groupingUsed="true"/>đ</span>
+            </div>
+            <div class="bk-summary-total">
+                <span class="label">Tổng cộng</span>
+                <span class="value"><fmt:formatNumber value="${booking.totalAmount}" type="number" groupingUsed="true"/>đ</span>
+            </div>
+            <div class="bk-summary-highlight">
+                <div>
+                    <div class="label">Tiền cọc yêu cầu</div>
+                    <div style="font-size:12px;color:var(--on-surface-variant);">Tạm giữ</div>
                 </div>
-                <div class="bk-summary-highlight">
-                    <div>
-                        <div class="label">Tiền cọc</div>
-                        <div style="font-size:12px;color:var(--on-surface-variant);">Tạm giữ</div>
-                    </div>
-                    <span class="value"><fmt:formatNumber value="${booking.depositAmount}" type="number" groupingUsed="true"/>đ</span>
-                </div>
-            </c:if>
+                <span class="value"><fmt:formatNumber value="${booking.depositAmount}" type="number" groupingUsed="true"/>đ</span>
+            </div>
 
             <%-- Actions --%>
             <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px;">

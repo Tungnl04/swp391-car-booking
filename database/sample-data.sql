@@ -50,7 +50,15 @@ VALUES
     (5, N'51A-56789', N'Kia',      N'Morning',    2022, N'Xanh',   4, N'AUTOMATIC', N'GASOLINE', 500000.00,  N'Kia Morning 2022, xe nhỏ gọn, phù hợp di chuyển nội thành.',                       N'MAINTENANCE', 30000, N'Chi nhánh Quận 7',  N'Bluetooth'),
     (6, N'51A-67890', N'Ford',     N'Ranger',     2023, N'Bạc',    5, N'AUTOMATIC', N'DIESEL',   1500000.00, N'Ford Ranger 2023, bán tải mạnh mẽ, phù hợp đi xa và off-road.',                    N'AVAILABLE',   5000,  N'Chi nhánh Thủ Đức', N'GPS, Bluetooth, Camera lùi, Ghế da, 4WD'),
     (7, N'51A-78901', N'VinFast',  N'VF 8',       2024, N'Trắng',  5, N'AUTOMATIC', N'ELECTRIC', 1800000.00, N'VinFast VF 8 2024, SUV điện cao cấp, công nghệ hiện đại.',                          N'AVAILABLE',   2000,  N'Chi nhánh Quận 1',  N'GPS, Bluetooth, Camera 360, ADAS, Ghế da, Sạc nhanh'),
-    (8, N'51A-89012', N'Toyota',   N'Fortuner',   2022, N'Đen',    7, N'AUTOMATIC', N'DIESEL',   1400000.00, N'Toyota Fortuner 2022, SUV 7 chỗ, phù hợp gia đình lớn.',                           N'AVAILABLE',   18000, N'Chi nhánh Thủ Đức', N'GPS, Bluetooth, Camera lùi, Ghế da');
+    (8, N'51A-89012', N'Toyota',   N'Fortuner',   2022, N'Đen',    7, N'AUTOMATIC', N'DIESEL',   1400000.00, N'Toyota Fortuner 2022, SUV 7 chỗ, phù hợp gia đình lớn.',                           N'AVAILABLE',   18000, N'Chi nhánh Thủ Đức', N'GPS, Bluetooth, Camera lùi, Ghế da'),
+    (9, N'51G-111.11', N'VinFast',  N'VF 5',       2023, N'Xanh',   5, N'AUTOMATIC', N'ELECTRIC', 900000.00,  N'VinFast VF 5 Plus 2023, xe điện thông minh, linh hoạt.',                           N'AVAILABLE',   5000,  N'Chi nhánh Quận 1',  N'GPS, Bluetooth, Cảm biến lùi'),
+    (10, N'51G-222.22', N'VinFast', N'VF e34',     2023, N'Xanh',   5, N'AUTOMATIC', N'ELECTRIC', 1200000.00, N'VinFast VF e34 2023, xe điện tiện dụng, trợ lý ảo thông minh.',                  N'AVAILABLE',   9000,  N'Chi nhánh Quận 7',  N'GPS, Bluetooth, Camera 360'),
+    (11, N'51G-333.33', N'VinFast', N'VF 9',       2024, N'Đen',    7, N'AUTOMATIC', N'ELECTRIC', 2500000.00, N'VinFast VF 9 2024, SUV điện cỡ lớn, siêu sang trọng, công nghệ tối tân.',             N'AVAILABLE',   1000,  N'Chi nhánh Quận 1',  N'GPS, Bluetooth, Camera 360, ADAS, Ghế mát-xa'),
+    (12, N'51G-444.44', N'VinFast', N'VF 8 Plus',  2024, N'Xám',    5, N'AUTOMATIC', N'ELECTRIC', 2000000.00, N'VinFast VF 8 Plus 2024, phiên bản thể thao nâng cấp của VF 8.',                    N'AVAILABLE',   3000,  N'Chi nhánh Cầu Giấy', N'GPS, Bluetooth, Camera 360, ADAS, Cửa sổ trời'),
+    (13, N'51G-555.55', N'Toyota',  N'Vios',       2022, N'Bạc',    5, N'AUTOMATIC', N'GASOLINE', 800000.00,  N'Toyota Vios 2022, xe gia đình bền bỉ, tiết kiệm xăng tốt.',                        N'AVAILABLE',   22000, N'Chi nhánh Quận 7',  N'Bluetooth, USB, Camera lùi'),
+    (14, N'51G-666.66', N'Toyota',  N'Camry',      2023, N'Đen',    5, N'AUTOMATIC', N'GASOLINE', 1600000.00, N'Toyota Camry 2.0Q 2023, sedan hạng D sang trọng, êm ái.',                            N'AVAILABLE',   7000,  N'Chi nhánh Quận 1',  N'GPS, Bluetooth, Camera 360, Ghế điện'),
+    (15, N'51G-777.77', N'Hyundai', N'Santa Fe',   2023, N'Trắng',  7, N'AUTOMATIC', N'DIESEL',   1500000.00, N'Hyundai Santa Fe 2023, xe SUV 7 chỗ đa dụng gia đình.',                             N'AVAILABLE',   11000, N'Chi nhánh Thủ Đức', N'GPS, Bluetooth, Ghế sưởi, Camera 360'),
+    (16, N'51G-888.88', N'Kia',     N'Cerato',     2022, N'Trắng',  5, N'AUTOMATIC', N'GASOLINE', 950000.00,  N'Kia Cerato 2022, kiểu dáng trẻ trung, hiện đại.',                                  N'AVAILABLE',   16000, N'Chi nhánh Quận 7',  N'Bluetooth, Camera lùi, Cửa sổ trời');
 
 SET IDENTITY_INSERT cars OFF;
 GO
@@ -68,7 +76,15 @@ VALUES
     (5, N'/assets/images/cars/morning-front.jpg',  N'Mặt trước',  1, 1),
     (6, N'/assets/images/cars/ranger-front.jpg',   N'Mặt trước',  1, 1),
     (7, N'/assets/images/cars/vf8-front.jpg',      N'Mặt trước',  1, 1),
-    (8, N'/assets/images/cars/fortuner-front.jpg', N'Mặt trước',  1, 1);
+    (8, N'/assets/images/cars/fortuner-front.jpg', N'Mặt trước',  1, 1),
+    (9, N'/assets/images/cars/vf5-front.jpg',      N'Mặt trước',  1, 1),
+    (10, N'/assets/images/cars/vfe34-front.jpg',   N'Mặt trước',  1, 1),
+    (11, N'/assets/images/cars/vf9-front.jpg',     N'Mặt trước',  1, 1),
+    (12, N'/assets/images/cars/vf8plus-front.jpg', N'Mặt trước',  1, 1),
+    (13, N'/assets/images/cars/vios-front2.jpg',   N'Mặt trước',  1, 1),
+    (14, N'/assets/images/cars/camry-front.jpg',   N'Mặt trước',  1, 1),
+    (15, N'/assets/images/cars/santafe-front.jpg', N'Mặt trước',  1, 1),
+    (16, N'/assets/images/cars/cerato-front.jpg',  N'Mặt trước',  1, 1);
 GO
 
 -- ============================================================
@@ -87,7 +103,7 @@ GO
 INSERT INTO policy_settings (policy_key, policy_value, description, category, updated_by)
 VALUES
     (N'LATE_FEE_PER_HOUR',          N'100000',  N'Phí trả trễ mỗi giờ (VND)',                              N'PENALTY',  1),
-    (N'EXTRA_KM_FEE',               N'5000',    N'Phí vượt km mỗi km (VND)',                                N'PENALTY',  1),
+    (N'EXTRA_KM_FEE',               N'4000',    N'Phí vượt km mỗi km (VND)',                                N'PENALTY',  1),
     (N'MAX_BOOKING_DAYS',           N'30',      N'Số ngày đặt xe tối đa',                                   N'BOOKING',  1),
     (N'MIN_BOOKING_HOURS',          N'24',      N'Số giờ đặt xe tối thiểu',                                 N'BOOKING',  1),
     (N'DEPOSIT_PERCENTAGE',         N'30',      N'Phần trăm đặt cọc (%)',                                   N'PRICING',  1),
@@ -97,7 +113,38 @@ VALUES
     (N'COMPANY_TAX_ID',             N'0123456789',     N'Mã số thuế công ty',                                N'TAX',      1),
     (N'COMPANY_ADDRESS',            N'123 Nguyễn Huệ, Quận 1, TP.HCM', N'Địa chỉ công ty trên hóa đơn',   N'TAX',      1),
     (N'KM_LIMIT_PER_DAY',           N'300',     N'Giới hạn km mỗi ngày',                                    N'BOOKING',  1),
-    (N'CANCELLATION_FEE_PERCENTAGE',N'10',      N'Phần trăm phí hủy đặt xe (%)',                            N'PENALTY',  1);
+    (N'CANCELLATION_FEE_PERCENTAGE',N'10',      N'Phần trăm phí hủy đặt xe (%)',                            N'PENALTY',  1),
+    (N'TRIP_KM_LIMIT',              N'150',     N'Giới hạn km cho gói thuê theo chuyến',                    N'BOOKING',  1),
+    (N'COMBO_7_KM_LIMIT',           N'1500',    N'Giới hạn km cho gói Combo 7 ngày',                        N'BOOKING',  1),
+    (N'COMBO_10_KM_LIMIT',          N'2000',    N'Giới hạn km cho gói Combo 10 ngày',                       N'BOOKING',  1),
+    (N'COMBO_30_KM_LIMIT',          N'5000',    N'Giới hạn km cho gói Combo 30 ngày',                       N'BOOKING',  1),
+    (N'DELIVERY_FEE_PER_KM',        N'15000',   N'Phí giao xe tận nơi cho mỗi km (VND)',                    N'PRICING',  1),
+    (N'DISCOUNT_SHORT_TIER',        N'5',       N'Phần trăm chiết khấu cho thuê từ 5 - 9 ngày (%)',         N'PRICING',  1),
+    (N'DISCOUNT_MEDIUM_TIER',       N'10',      N'Phần trăm chiết khấu cho thuê từ 10 - 29 ngày (%)',       N'PRICING',  1),
+    (N'DISCOUNT_LONG_TIER',          N'20',      N'Phần trăm chiết khấu cho thuê từ 30 ngày trở lên (%)',    N'PRICING',  1),
+    (N'LOW_MILEAGE_DISCOUNT_PERCENT',N'5',      N'Phần trăm chiết khấu hao xe thấp (%)',                    N'PRICING',  1),
+    (N'COMBO_7_DISCOUNT_PERCENT',   N'15',      N'Phần trăm chiết khấu cho gói Combo 7 ngày (%)',           N'PRICING',  1),
+    (N'COMBO_10_DISCOUNT_PERCENT',  N'20',      N'Phần trăm chiết khấu cho gói Combo 10 ngày (%)',          N'PRICING',  1),
+    (N'COMBO_30_DISCOUNT_PERCENT',  N'30',      N'Phần trăm chiết khấu cho gói Combo 30 ngày (%)',          N'PRICING',  1),
+    -- Lunar New Year surcharge configuration
+    (N'TET_START_DATE',             N'2026-02-12',N'Ngày bắt đầu áp dụng giá Tết Nguyên Đán (YYYY-MM-DD)',  N'PRICING',  1),
+    (N'TET_END_DATE',               N'2026-02-22',N'Ngày kết thúc áp dụng giá Tết Nguyên Đán (YYYY-MM-DD)', N'PRICING',  1),
+    (N'TET_SURCHARGE_PERCENT',      N'20',      N'Phần trăm phụ thu dịp Tết Nguyên Đán (%)',                N'PRICING',  1),
+    -- Payment settings
+    (N'PAYMENT_METHOD_CASH_ENABLED',          N'true',  N'Cho phép thanh toán tiền mặt',                N'PAYMENT', 1),
+    (N'PAYMENT_METHOD_BANK_TRANSFER_ENABLED', N'true',  N'Cho phép thanh toán chuyển khoản ngân hàng',  N'PAYMENT', 1),
+    (N'PAYMENT_METHOD_CARD_ENABLED',          N'true',  N'Cho phép thanh toán thẻ tín dụng/ghi nợ',    N'PAYMENT', 1),
+    (N'PAYMENT_METHOD_MOMO_ENABLED',          N'false', N'Cho phép thanh toán qua ví MoMo',             N'PAYMENT', 1),
+    (N'PAYMENT_METHOD_VNPAY_ENABLED',         N'false', N'Cho phép thanh toán qua VNPay',               N'PAYMENT', 1),
+    (N'PAYMENT_METHOD_ZALOPAY_ENABLED',       N'false', N'Cho phép thanh toán qua ZaloPay',             N'PAYMENT', 1),
+    (N'PAYMENT_GRACE_PERIOD_HOURS',   N'24',  N'Số giờ gia hạn thanh toán trước khi hủy đặt xe',   N'PAYMENT', 1),
+    (N'PAYMENT_CURRENCY',             N'VND', N'Đơn vị tiền tệ sử dụng trong hệ thống',             N'PAYMENT', 1),
+    (N'PAYMENT_PARTIAL_ALLOWED',      N'false',N'Cho phép thanh toán từng phần (không đủ 100%)',    N'PAYMENT', 1),
+    (N'PAYMENT_AUTO_CONFIRM_AMOUNT',  N'0',   N'Ngưỡng tự động xác nhận thanh toán (0 = tắt)',      N'PAYMENT', 1),
+    (N'BANK_ACCOUNT_NAME',            N'CÔNG TY TNHH CAR RENTAL',   N'Tên tài khoản ngân hàng',     N'PAYMENT', 1),
+    (N'BANK_ACCOUNT_NUMBER',          N'1234567890',                 N'Số tài khoản ngân hàng',      N'PAYMENT', 1),
+    (N'BANK_NAME',                    N'Vietcombank',                N'Tên ngân hàng',               N'PAYMENT', 1),
+    (N'BANK_BRANCH',                  N'Chi nhánh TP.HCM',          N'Chi nhánh ngân hàng',         N'PAYMENT', 1);
 GO
 
 -- ============================================================

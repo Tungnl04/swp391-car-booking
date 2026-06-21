@@ -210,6 +210,19 @@ public class BookingService {
                         contract.setStatus(com.swp391.carrental.contract.constant.ContractStatus.ACTIVE);
                         contract.setTermsAndConditions("Điều khoản thuê xe tự lái mặc định của hệ thống CarPro.");
                         contract.setCreatedBy(approvedBy);
+
+                        // Redesign Fields
+                        contract.setRentalMode(booking.getRentalMode());
+                        contract.setPricingPackage(booking.getPricingPackage());
+                        contract.setDeliveryMethod(booking.getDeliveryMethod());
+                        contract.setDeliveryAddress(booking.getDeliveryAddress());
+                        contract.setDeliveryDistance(booking.getDeliveryDistance());
+                        contract.setDeliveryFee(booking.getDeliveryFee());
+                        contract.setKmLimit(booking.getKmLimit());
+                        contract.setEstimatedKm(booking.getEstimatedKm());
+                        contract.setBaseAmount(booking.getBaseAmount());
+                        contract.setDiscountAmount(booking.getDiscountAmount());
+                        contract.setTaxAmount(booking.getTaxAmount());
                         
                         String contractNumber = "CTR-"
                                 + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy"))
