@@ -20,9 +20,6 @@ import com.swp391.carrental.vehicle.model.Car;
  * Version: 1.0
  * Description: Contains business logic for HandoverService.
  */
-
-
-
 /**
  * Service for vehicle handover operations. BR-06: Car becomes Rented after
  * handover.

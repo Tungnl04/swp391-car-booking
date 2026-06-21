@@ -49,6 +49,28 @@
         accent-color: var(--primary);
         cursor: pointer;
     }
+    .preview-remove-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+
+        width: 20px;
+        height: 20px;
+
+        border: none;
+        border-radius: 50%;
+
+        background: black;
+        color: white;
+
+        cursor: pointer;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 12px;
+    }
 </style>
 
 <div class="bk-page-header">
@@ -135,7 +157,7 @@
         </div>
 
         <%-- Chỉ số đo km và nhiên liệu --%>
-        <div class="bk-card" style="padding: 24px; margin-bottom: 0; display: flex; flex-direction: column; grid-column:1 / span 2;">
+        <div class="bk-card" style="padding: 24px; margin-bottom: 24px; display: flex; flex-direction: column; grid-column:1 / span 2;">
             <div class="bk-card-title">
                 <span class="material-symbols-outlined">speed</span>
                 <span>Chỉ số trạng thái hiện tại</span>
@@ -280,6 +302,7 @@
                              object-fit:cover;
                              border-radius:8px;
                              border:1px solid #ddd;" />
+                        <button type="button" class="del-old preview-remove-btn">&times;</button>
                     </c:forEach>
                 </c:if>
             </div>
@@ -322,77 +345,92 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
         const fileInput = document.getElementById("evidencePhotos");
         const previewContainer = document.getElementById("imagePreviewContainer");
-        let allFiles = [];
+        const errorDiv = document.getElementById("uploadPhotosError");
+
+        let selectedFiles = [];
 
         fileInput.addEventListener("change", function () {
-            const errorDiv = document.getElementById("uploadPhotosError");
-            errorDiv.innerHTML = "";
-            for (const file of Array.from(this.files)) {
-                if (!file.type.startsWith("image/")) {
-                    errorDiv.innerHTML += file.name + " không phải là tệp ảnh hợp lệ.<br>";
-                    continue;
+
+            const files = Array.from(fileInput.files);
+
+            files.forEach(function (file) {
+
+                // Validate dung lượng tối đa 10MB
+                if (file.size > 10 * 1024 * 1024) {
+                    showError(file.name + " vượt quá 10MB");
+                    return;
                 }
-                if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                    errorDiv.innerHTML += file.name + " vượt quá dung lượng cho phép (10MB).<br>";
-                    continue;
-                }
-                allFiles.push(file);
-            }
-            renderPreviews();
-            updateInputFiles();
+
+                selectedFiles.push(file);
+
+                previewImage(file);
+            });
+
+            updateFileInput();
         });
 
-        function renderPreviews() {
-            previewContainer.innerHTML = "";
-            allFiles.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const wrapper = document.createElement("div");
-                    wrapper.style.position = "relative";
-                    wrapper.style.display = "inline-block";
-                    wrapper.style.marginRight = "12px";
-                    wrapper.style.marginBottom = "12px";
-                    const previewImg = document.createElement("img");
-                    previewImg.src = e.target.result;
-                    previewImg.style.width = "120px";
-                    previewImg.style.height = "120px";
-                    previewImg.style.objectFit = "cover";
-                    previewImg.style.borderRadius = "8px";
-                    previewImg.style.border = "1px solid #ddd";
-                    // Nút xóa
-                    const removeBtn = document.createElement("button");
-                    removeBtn.innerHTML = "&times;";
-                    removeBtn.style.position = "absolute";
-                    removeBtn.style.top = "-8px";
-                    removeBtn.style.right = "-8px";
-                    removeBtn.style.background = "black";
-                    removeBtn.style.color = "white";
-                    removeBtn.style.border = "none";
-                    removeBtn.style.borderRadius = "50%";
-                    removeBtn.style.width = "20px";
-                    removeBtn.style.height = "20px";
-                    removeBtn.style.cursor = "pointer";
-                    // Sự kiện xóa
-                    removeBtn.onclick = function () {
-                        allFiles.splice(index, 1);
-                        renderPreviews();
-                        updateInputFiles();
-                    };
-                    wrapper.appendChild(previewImg);
-                    wrapper.appendChild(removeBtn);
-                    previewContainer.appendChild(wrapper);
+        function previewImage(file) {
+
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+
+                const wrapper = document.createElement("div");
+                wrapper.style.position = "relative";
+                wrapper.style.display = "inline-block";
+
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.style.width = "120px";
+                img.style.height = "120px";
+                img.style.objectFit = "cover";
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.type = "button";
+                deleteBtn.innerHTML = "&times;";
+                deleteBtn.classList.add("preview-remove-btn");
+
+                deleteBtn.onclick = function () {
+
+                    selectedFiles = selectedFiles.filter(function (f) {
+                        return f !== file;
+                    });
+
+                    wrapper.remove();
+
+                    updateFileInput();
                 };
-                reader.readAsDataURL(file);
-            });
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(deleteBtn);
+
+                previewContainer.appendChild(wrapper);
+            };
+
+            reader.readAsDataURL(file);
         }
 
-        // Đồng bộ mảng allFiles vào input file
-        function updateInputFiles() {
+        function updateFileInput() {
+
             const dt = new DataTransfer();
-            allFiles.forEach((file) => dt.items.add(file));
+
+            selectedFiles.forEach(function (file) {
+                dt.items.add(file);
+            });
+
             fileInput.files = dt.files;
+        }
+
+        function showError(message) {
+
+            errorDiv.innerText = message;
+
+            setTimeout(function () {
+                errorDiv.innerText = "";
+            }, 3000);
         }
     });
 </script>

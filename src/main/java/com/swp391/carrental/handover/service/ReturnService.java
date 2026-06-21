@@ -8,10 +8,10 @@ import com.swp391.carrental.booking.model.Booking;
 import com.swp391.carrental.core.exception.AppException;
 import com.swp391.carrental.handover.dao.ReturnDAO;
 import com.swp391.carrental.handover.model.VehicleReturn;
-import com.swp391.carrental.payment.model.Payment;
 import com.swp391.carrental.vehicle.constant.CarStatus;
 import com.swp391.carrental.vehicle.dao.CarDAO;
-import com.swp391.carrental.vehicle.model.Car;
+import java.time.LocalDateTime;
+import static java.time.LocalDateTime.now;
 
 /*
  * Name: ReturnService
@@ -20,13 +20,10 @@ import com.swp391.carrental.vehicle.model.Car;
  * Version: 1.0
  * Description: Contains business logic for ReturnService.
  */
-
-
-
 /**
- * Service for vehicle return operations.
- * BR-07: Return fee includes late fee, extra km fee, damage fee, cleaning fee, lost item fee.
- * BR-08: Booking becomes Completed only after vehicle return and required payments.
+ * Service for vehicle return operations. BR-07: Return fee includes late fee,
+ * extra km fee, damage fee, cleaning fee, lost item fee. BR-08: Booking becomes
+ * Completed only after vehicle return and required payments.
  */
 public class ReturnService {
 
@@ -52,6 +49,11 @@ public class ReturnService {
 
     public List<VehicleReturn> getAllReturns() {
         try {
+//            LocalDateTime now = LocalDateTime.now();
+//            Booking booking = new Booking();
+//           if (now.isAfter(booking.getEndDate())){
+//               booking.setStatus("OVERDUE");
+//           }
             return returnDAO.findAll();
         } catch (SQLException e) {
             throw new AppException("Failed to get return records.", e);
@@ -59,9 +61,8 @@ public class ReturnService {
     }
 
     /**
-     * Record vehicle return.
-     * BR-07: Calculate additional fees.
-     * BR-08: Mark booking as PENDING_SETTLEMENT (awaiting payment confirmation).
+     * Record vehicle return. BR-07: Calculate additional fees. BR-08: Mark
+     * booking as PENDING_SETTLEMENT (awaiting payment confirmation).
      */
     public int returnVehicle(VehicleReturn vehicleReturn) {
         try {
@@ -81,6 +82,14 @@ public class ReturnService {
             return returnId;
         } catch (SQLException e) {
             throw new AppException("Failed to record vehicle return.", e);
+        }
+    }
+
+    public void updateReturnVehicle(VehicleReturn returns) {
+        try {
+            returnDAO.update(returns);
+        } catch (SQLException e) {
+            throw new AppException("Failed to update vehicle handover.", e);
         }
     }
 }

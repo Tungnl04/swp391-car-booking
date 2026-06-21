@@ -49,6 +49,28 @@
         accent-color: var(--primary);
         cursor: pointer;
     }
+    .preview-remove-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+
+        width: 20px;
+        height: 20px;
+
+        border: none;
+        border-radius: 50%;
+
+        background: black;
+        color: white;
+
+        cursor: pointer;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 12px;
+    }
 </style>
 
 <div class="bk-page-header">
@@ -135,7 +157,7 @@
         </div>
 
         <%-- Chỉ số đo km và nhiên liệu --%>
-        <div class="bk-card" style="padding: 24px; margin-bottom: 0; display: flex; flex-direction: column; grid-column:1 / span 2;">
+        <div class="bk-card" style="padding: 24px; margin-bottom: 24px; display: flex; flex-direction: column; grid-column:1 / span 2;">
             <div class="bk-card-title">
                 <span class="material-symbols-outlined">speed</span>
                 <span>Chỉ số trạng thái hiện tại</span>
@@ -149,6 +171,10 @@
                         <span class="material-symbols-outlined">speed</span>
                         <input type="number" id="currentOdo" name="currentOdo" value="${vehicleRt.mileageAtReturn}" class="bk-form-input" placeholder="Nhập số liệu hiện tại"/>
                     </div>
+                    <span
+                        class="font-body-sm text-body-sm text-on-surface-variant mt-1 text-[12px]">Quãng đường đã đi: ${handover.mileageAtHandover}
+                        <!--<span class="font-semibold text-primary">318 km</span>-->
+                    </span>
                     <c:if test="${not empty currentOdoError}">
                         <div style="color:red; margin-top:5px;">
                             ${currentOdoError}
@@ -181,6 +207,7 @@
                             <span class="fuel-label">F</span>
                         </label>
                     </div>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant mt-1 text-[12px]">Mức lúc nhận: Đầy (8/8)</span>
                 </div>
             </div>
         </div>
@@ -199,15 +226,31 @@
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label class="checklist-label">
                             <input type="checkbox" name="chkExteriorScratch" value="true" class="checklist-checkbox" ${vehicleRt.exteriorCondition.contains('Không vết xước/lõm mới') ? 'checked' : ''} />
-                            <span>Không có vết xước hoặc vết lõm mới</span>
+                            <span>Thân xe không có vết trầy xước mới</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkWindshield" value="true" class="checklist-checkbox" ${vehicleRt.exteriorCondition.contains('Kính chắn gió nguyên vẹn') ? 'checked' : ''} />
-                            <span>Kính chắn gió nguyên vẹn</span>
+                            <input type="checkbox" name="chkExteriorBumper" value="true" class="checklist-checkbox" ${vehicleRt.exteriorCondition.contains('Không vết xước/lõm mới') ? 'checked' : ''} />
+                            <span>Cản trước và cản sau nguyên vẹn</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkTires" value="true" class="checklist-checkbox" ${vehicleRt.exteriorCondition.contains('Lốp xe tốt') ? 'checked' : ''} />
-                            <span>Lốp xe trong tình trạng tốt</span>
+                            <input type="checkbox" name="chkExteriorGlass" value="true" class="checklist-checkbox" ${vehicleRt.exteriorCondition.contains('Không vết xước/lõm mới') ? 'checked' : ''} />
+                            <span>Kính chắn gió và cửa kính không nứt vỡ</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkExteriorLights" value="true" class="checklist-checkbox" ${vehicleRt.exteriorCondition.contains('Không vết xước/lõm mới') ? 'checked' : ''} />
+                            <span>Đèn pha, đèn hậu hoạt động bình thường</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkExteriorMirror" value="true" class="checklist-checkbox" ${vehicleRt.exteriorCondition.contains('Không vết xước/lõm mới') ? 'checked' : ''} />
+                            <span>Gương chiếu hậu đầy đủ, không hư hỏng</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkExteriorTireWheel" value="true" class="checklist-checkbox" ${vehicleRt.exteriorCondition.contains('Lốp xe tốt') ? 'checked' : ''} />
+                            <span>Lốp xe và mâm xe trong tình trạng tốt</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkExteriorLicensePlate" value="true" class="checklist-checkbox" ${vehicleRt.exteriorCondition.contains('Không vết xước/lõm mới') ? 'checked' : ''} />
+                            <span>Biển số xe đầy đủ và rõ ràng</span>
                         </label>
                     </div>
                 </div>
@@ -217,16 +260,28 @@
                     <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid var(--outline-variant); padding-bottom: 4px;">NỘI THẤT</div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkCleanliness" value="true" class="checklist-checkbox" ${vehicleRt.interiorCondition.contains('Sạch sẽ') ? 'checked' : ''} />
-                            <span>Sạch sẽ và được hút bụi</span>
+                            <input type="checkbox" name="chkInteriorSeats" value="true" class="checklist-checkbox" ${vehicleRt.interiorCondition.contains('Sạch sẽ') ? 'checked' : ''} />
+                            <span>Ghế ngồi sạch sẽ, không rách hỏng</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkOdor" value="true" class="checklist-checkbox" ${vehicleRt.interiorCondition.contains('Không mùi') ? 'checked' : ''} />
-                            <span>Không có mùi hôi</span>
+                            <input type="checkbox" name="chkInteriorDashboard" value="true" class="checklist-checkbox" ${vehicleRt.interiorCondition.contains('Sạch sẽ') ? 'checked' : ''} />
+                            <span>Taplo và bảng điều khiển hoạt động bình thường</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkMatsAccessories" value="true" class="checklist-checkbox" ${vehicleRt.interiorCondition.contains('Đủ phụ kiện') ? 'checked' : ''} />
-                            <span>Có đủ thảm và phụ kiện</span>
+                            <input type="checkbox" name="chkInteriorAirConditioner" value="true" class="checklist-checkbox" ${vehicleRt.interiorCondition.contains('Sạch sẽ') ? 'checked' : ''} />
+                            <span>Điều hòa hoạt động tốt</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkInteriorAudioSystem" value="true" class="checklist-checkbox" ${vehicleRt.interiorCondition.contains('Sạch sẽ') ? 'checked' : ''} />
+                            <span>Hệ thống âm thanh hoạt động bình thường</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkInteriorCleanliness" value="true" class="checklist-checkbox" ${vehicleRt.interiorCondition.contains('Sạch sẽ') ? 'checked' : ''} />
+                            <span>Không có mùi lạ hoặc rác thải trong xe</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkInteriorAccessories" value="true" class="checklist-checkbox" ${vehicleRt.interiorCondition.contains('Đủ phụ kiện') ? 'checked' : ''} />
+                            <span>Đầy đủ phụ kiện đi kèm</span>
                         </label>
                     </div>
                 </div>
@@ -236,12 +291,28 @@
                     <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid var(--outline-variant); padding-bottom: 4px;">ĐỘNG CƠ / MÁY MÓC</div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkEngine" value="true"  class="checklist-checkbox" ${vehicleRt.accessoriesChecklist.contains('Động cơ bình thường') ? 'checked' : ''} />
+                            <input type="checkbox" name="chkEngineStart" value="true"  class="checklist-checkbox" ${vehicleRt.accessoriesChecklist.contains('Động cơ bình thường') ? 'checked' : ''} />
                             <span>Động cơ khởi động bình thường</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkDashboardLights" value="true" class="checklist-checkbox" ${vehicleRt.accessoriesChecklist.contains('Không cảnh báo') ? 'checked' : ''} />
-                            <span>Không có đèn cảnh báo trên bảng điều khiển</span>
+                            <input type="checkbox" name="chkEngineWarningLight" value="true"  class="checklist-checkbox" ${vehicleRt.accessoriesChecklist.contains('Động cơ bình thường') ? 'checked' : ''} />
+                            <span>Không có đèn cảnh báo trên bảng đồng hồ</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkEngineFuelLevel" value="true"  class="checklist-checkbox" ${vehicleRt.accessoriesChecklist.contains('Động cơ bình thường') ? 'checked' : ''} />
+                            <span>Mức nhiên liệu đúng theo ghi nhận</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkEngineNoise" value="true"  class="checklist-checkbox" ${vehicleRt.accessoriesChecklist.contains('Động cơ bình thường') ? 'checked' : ''} />
+                            <span>Không phát hiện tiếng ồn bất thường</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkEngineBrakeSystem" value="true"  class="checklist-checkbox" ${vehicleRt.accessoriesChecklist.contains('Động cơ bình thường') ? 'checked' : ''} />
+                            <span>Hệ thống phanh hoạt động bình thường</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkEngineFluidLeak" value="true"  class="checklist-checkbox" ${vehicleRt.accessoriesChecklist.contains('Động cơ bình thường') ? 'checked' : ''} />
+                            <span>Không phát hiện rò rỉ dầu hoặc chất lỏng</span>
                         </label>
                     </div>
                 </div>
@@ -275,7 +346,7 @@
                             <span class="img-wrapper" data-src="${photo}">
                                 <img src="${pageContext.request.contextPath}${photo}"
                                      style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid #ddd;" />
-                                <button type="button" class="del-old">x</button>
+                                <button type="button" class="del-old preview-remove-btn">&times;</button>
                             </span>
                         </c:forEach>
                     </div>
@@ -289,25 +360,18 @@
                     <span>Ghi Chú Thêm</span>
                 </div>
                 <div style="flex-grow: 1;">
-                    <textarea name="notes" placeholder="Nhập ghi chú chi tiết về tình trạng xe tại thời điểm bàn giao (nếu có)..." style="width: 100%; height: 100%; min-height: 100px; padding: 12px; border: 1.5px solid var(--outline-variant); border-radius: 8px; background: var(--surface); color: var(--text-primary); font-size: 13px; font-family: inherit; resize: none; outline: none;" onfocus="this.style.borderColor = 'var(--primary)'" onblur="this.style.borderColor = 'var(--outline-variant)'">${vehicleRt.notes}</textarea>
+                    <textarea name="notes" placeholder="Nhập ghi chú chi tiết về tình trạng xe tại thời điểm nhận lại xe (nếu có)..." style="width: 100%; height: 100%; min-height: 100px; padding: 12px; border: 1.5px solid var(--outline-variant); border-radius: 8px; background: var(--surface); color: var(--text-primary); font-size: 13px; font-family: inherit; resize: none; outline: none;" onfocus="this.style.borderColor = 'var(--primary)'" onblur="this.style.borderColor = 'var(--outline-variant)'">${vehicleRt.notes}</textarea>
                 </div>
             </div>
         </div>
 
         <!-- Action Footer -->
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; border-top: 1px solid var(--outline-variant); padding-top: 16px;">
-            <a href="${pageContext.request.contextPath}/contracts" class="bk-btn bk-btn-outline" style="min-width: 120px; text-align: center;">
-                Xem hợp đồng
+            <a href="${pageContext.request.contextPath}/additional-fees?bookingId=${bookingId}&carId=${carId}" class="bk-btn bk-btn-outline" style="text-align: center;">
+                Tính phí
             </a>
-            <button type="submit" name="action" value="delete" class="bk-btn bk-btn-outline" onclick="return confirm('Bạn có chắc muốn xóa biên bản này?');">
-                <span class="material-symbols-outlined">delete</span>
-                Xóa biên bản
-            </button>
-            <a href="${pageContext.request.contextPath}/returns" class="bk-btn bk-btn-outline" style="background: rgba(0, 0, 0, 0.05); color: var(--text-primary); border-color: transparent;">
-                Hủy bỏ
-            </a>
-            <button type="submit" name="action" value="save" class="bk-btn bk-btn-primary" style="display: inline-flex; align-items: center; gap: 8px; font-weight:600;">
-                <span class="material-symbols-outlined" style="font-size: 18px;">check_circle</span> Lưu
+            <button type="submit" name="action" value="confirm" class="bk-btn bk-btn-primary" style="display: inline-flex; align-items: center; gap: 8px; font-weight:600;">
+                <span class="material-symbols-outlined" style="font-size: 18px;">check_circle</span> Xác nhận trả xe
             </button>
         </div>
     </form>
@@ -315,114 +379,116 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
         const fileInput = document.getElementById("evidencePhotos");
         const previewContainer = document.getElementById("imagePreviewContainer");
-        const errorDiv = document.getElementById("uploadPhotosError"); // Đảm bảo bạn có thẻ này trong HTML
+        const errorDiv = document.getElementById("uploadPhotosError");
         const remainingPhotosInput = document.getElementById("remainingPhotos");
 
-        let allNewFiles = [];
+        let selectedFiles = [];
         let existingPhotos = [];
 
-        // Lấy danh sách ảnh cũ từ server
-        document.querySelectorAll(".img-wrapper").forEach(el => {
-            existingPhotos.push(el.getAttribute("data-src"));
+        document.querySelectorAll(".img-wrapper").forEach(function (imgWrapper) {
+            existingPhotos.push(imgWrapper.dataset.src);
         });
+
         remainingPhotosInput.value = existingPhotos.join(",");
 
-        fileInput.addEventListener("change", async function () {
-            for (const file of Array.from(this.files)) {
-                if (!file.type.startsWith("image/"))
-                    continue;
-                // Validate kích thước (giống logic Create)
-                const isValid = await validateImageSize(file);
-                if (isValid) {
-                    allNewFiles.push(file);
-                } else {
-                    errorDiv.innerHTML = "Ảnh " + file.name + " vượt quá kích thước (800x400px)!";
-                    fileInput.value = "";
+        fileInput.addEventListener("change", function () {
+
+            const files = Array.from(fileInput.files);
+
+            files.forEach(function (file) {
+
+                if (file.size > 10 * 1024 * 1024) {
+                    showError(file.name + " vượt quá 10MB");
+                    return;
                 }
-            }
-            render();
-            updateInputFiles();
+
+                selectedFiles.push(file);
+
+                previewNewImage(file);
+            });
+
+            updateFileInput();
         });
 
-        // Hàm kiểm tra kích thước ảnh
-        function validateImageSize(file) {
-            return new Promise((resolve) => {
-                const img = new Image();
-                img.onload = () => resolve(img.width <= 800 && img.height <= 400);
-                img.onerror = () => resolve(false);
-                img.src = URL.createObjectURL(file);
-            });
-        }
+        function previewNewImage(file) {
 
-        function render() {
-            previewContainer.innerHTML = "";
-            allNewFiles.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const wrapper = document.createElement("div");
-                    wrapper.style.position = "relative";
-                    wrapper.style.display = "inline-block";
-                    wrapper.style.marginRight = "10px";
+            const reader = new FileReader();
 
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.style.width = "120px";
-                    img.style.height = "120px";
-                    img.style.objectFit = "cover";
-                    img.style.borderRadius = "8px"; // Thêm bo góc cho đồng bộ
-                    img.style.border = "1px solid #ddd";
+            reader.onload = function (e) {
 
-                    const removeBtn = document.createElement("button");
-                    removeBtn.innerHTML = "&times;";
-                    removeBtn.type = "button";
-                    removeBtn.style.position = "absolute";
-                    removeBtn.style.top = "-8px";
-                    removeBtn.style.right = "-8px";
-                    removeBtn.style.background = "black";
-                    removeBtn.style.color = "white";
-                    removeBtn.style.border = "none";
-                    removeBtn.style.borderRadius = "50%";
-                    removeBtn.style.width = "20px";
-                    removeBtn.style.height = "20px";
-                    removeBtn.style.cursor = "pointer";
-                    removeBtn.style.display = "flex";
-                    removeBtn.style.alignItems = "center";
-                    removeBtn.style.justifyContent = "center";
-                    removeBtn.style.fontSize = "14px";
+                const wrapper = document.createElement("div");
+                wrapper.style.position = "relative";
+                wrapper.style.display = "inline-block";
 
-                    // Xóa ảnh mới trong allNewFiles
-                    removeBtn.onclick = () => {
-                        allNewFiles.splice(index, 1);
-                        render();
-                        updateInputFiles();
-                    };
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.style.width = "120px";
+                img.style.height = "120px";
+                img.style.objectFit = "cover";
 
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(removeBtn);
-                    previewContainer.appendChild(wrapper);
+                const deleteBtn = document.createElement("button");
+                deleteBtn.type = "button";
+                deleteBtn.innerHTML = "&times;";
+                deleteBtn.classList.add("preview-remove-btn");
+
+                deleteBtn.onclick = function () {
+
+                    selectedFiles = selectedFiles.filter(function (f) {
+                        return f !== file;
+                    });
+
+                    wrapper.remove();
+
+                    updateFileInput();
                 };
-                reader.readAsDataURL(file);
-            });
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(deleteBtn);
+
+                previewContainer.appendChild(wrapper);
+            };
+
+            reader.readAsDataURL(file);
         }
 
-        function updateInputFiles() {
+        function updateFileInput() {
+
             const dt = new DataTransfer();
-            allNewFiles.forEach(f => dt.items.add(f));
+
+            selectedFiles.forEach(function (file) {
+                dt.items.add(file);
+            });
+
             fileInput.files = dt.files;
         }
 
-        // Xử lý nút xóa ảnh cũ
-        document.querySelectorAll(".del-old").forEach(btn => {
-            btn.onclick = function () {
-                const parent = this.parentElement;
-                const src = parent.getAttribute("data-src");
-                existingPhotos = existingPhotos.filter(p => p !== src);
-                parent.remove();
+
+        document.querySelectorAll(".del-old").forEach(function (btn) {
+
+            btn.addEventListener("click", function () {
+
+                const wrapper = btn.parentElement;
+                const photoUrl = wrapper.dataset.src;
+
+                existingPhotos = existingPhotos.filter(function (url) {
+                    return url !== photoUrl;
+                });
+
                 remainingPhotosInput.value = existingPhotos.join(",");
-            };
+
+                wrapper.remove();
+            });
         });
+
+        function showError(message) {
+            errorDiv.innerText = message;
+            setTimeout(function () {
+                errorDiv.innerText = "";
+            }, 3000);
+        }
     });
 </script>
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

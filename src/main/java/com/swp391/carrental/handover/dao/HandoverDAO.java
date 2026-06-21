@@ -13,9 +13,6 @@ import com.swp391.carrental.handover.model.VehicleHandover;
  * Version: 1.0
  * Description: Handles database operations for HandoverDAO.
  */
-
-
-
 /**
  * Data Access Object for VehicleHandover entities.
  */
@@ -58,15 +55,6 @@ public class HandoverDAO {
         return list;
     }
 
-    public boolean updateStatus(int handoverId, String status) throws SQLException {
-        String sql = "UPDATE vehicle_handovers SET status = ? WHERE handover_id = ?";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, status);
-            ps.setInt(2, handoverId);
-            return ps.executeUpdate() > 0;
-        }
-    }
-
     public int insert(VehicleHandover h) throws SQLException {
         String sql = "INSERT INTO vehicle_handovers (booking_id, contract_id, car_id, handover_date, "
                 + "mileage_at_handover, fuel_level, exterior_condition, interior_condition, "
@@ -85,7 +73,7 @@ public class HandoverDAO {
             ps.setString(6, h.getFuelLevel());
             ps.setString(7, h.getExteriorCondition());
             ps.setString(8, h.getInteriorCondition());
-            ps.setString(9, h.getAccessoriesChecklist());
+            ps.setString(9, h.getMechanicalCondition());
             ps.setString(10, h.getPhotosUrl());
             ps.setString(11, h.getNotes());
             ps.setInt(12, h.getHandedBy());
@@ -124,7 +112,7 @@ public class HandoverDAO {
             ps.setString(6, h.getFuelLevel());
             ps.setString(7, h.getExteriorCondition());
             ps.setString(8, h.getInteriorCondition());
-            ps.setString(9, h.getAccessoriesChecklist());
+            ps.setString(9, h.getMechanicalCondition());
             ps.setString(10, h.getPhotosUrl());
             ps.setString(11, h.getNotes());
             ps.setInt(12, h.getHandedBy());
@@ -133,6 +121,15 @@ public class HandoverDAO {
             ps.setInt(15, h.getHandoverId());
 
             return ps.executeUpdate();
+        }
+    }
+
+    public boolean updateStatus(int handoverId, String status) throws SQLException {
+        String sql = "UPDATE vehicle_handovers SET status = ? WHERE handover_id = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setInt(2, handoverId);
+            return ps.executeUpdate() > 0;
         }
     }
 
@@ -161,7 +158,7 @@ public class HandoverDAO {
         h.setFuelLevel(rs.getString("fuel_level"));
         h.setExteriorCondition(rs.getString("exterior_condition"));
         h.setInteriorCondition(rs.getString("interior_condition"));
-        h.setAccessoriesChecklist(rs.getString("accessories_checklist"));
+        h.setMechanicalCondition(rs.getString("accessories_checklist"));
         h.setPhotosUrl(rs.getString("photos_url"));
         h.setNotes(rs.getString("notes"));
         h.setHandedBy(rs.getInt("handed_by"));

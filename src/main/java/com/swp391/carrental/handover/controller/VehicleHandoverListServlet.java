@@ -9,16 +9,16 @@ import java.io.IOException;
 import com.swp391.carrental.handover.service.HandoverService;
 
 /*
- * Name: HandoverManagementServlet
+ * Name: VehicleHandoverListServlet
  * @Author: TamTTMHE190340
  * Date: 23/05/2026
  * Version: 1.0
- * Description: Handles HTTP requests and responses for HandoverManagementServlet.
+ * Description: Handles HTTP requests and responses for VehicleHandoverListServlet.
  */
 
 
-@WebServlet(name = "HandoverManagementServlet", urlPatterns = {"/handovers"})
-public class HandoverManagementServlet extends HttpServlet {
+@WebServlet(name = "VehicleHandoverListServlet", urlPatterns = {"/handovers"})
+public class VehicleHandoverListServlet extends HttpServlet {
     private final HandoverService handoverService = new HandoverService();
 
     @Override

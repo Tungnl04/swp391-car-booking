@@ -9,21 +9,19 @@ import java.io.IOException;
 import com.swp391.carrental.handover.service.ReturnService;
 
 /*
- * Name: VehicleReturnServlet
+ * Name: VehicleReturnListServlet
  * @Author: TamTTMHE190340
  * Date: 23/05/2026
  * Version: 1.0
- * Description: Handles HTTP requests and responses for VehicleReturnServlet.
+ * Description: Handles HTTP requests and responses for VehicleReturnListServlet.
  */
+@WebServlet(name = "VehicleReturnListServlet", urlPatterns = {"/returns"})
+public class VehicleReturnListServlet extends HttpServlet {
 
-
-@WebServlet(name = "VehicleReturnServlet", urlPatterns = {"/returns"})
-public class VehicleReturnServlet extends HttpServlet {
     private final ReturnService returnService = new ReturnService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("doGet");
         request.setAttribute("returns", returnService.getAllReturns());
         request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-return.jsp").forward(request, response);
     }
@@ -34,4 +32,3 @@ public class VehicleReturnServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/returns");
     }
 }
-

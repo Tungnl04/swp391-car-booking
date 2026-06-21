@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
  * Version: 1.0
  * Description: Handles business logic and operations for VehicleReturn.
  */
-
-
 /**
  * Records when a vehicle is returned by a customer. Maps to the
  * 'vehicle_returns' table.
@@ -28,6 +26,7 @@ public class VehicleReturn {
     private String fuelLevel;
     private String exteriorCondition;
     private String interiorCondition;
+    private String mechanicalCondition;
     private String damageDescription;
     private String photosUrl;
     private BigDecimal lateFee;
@@ -39,7 +38,6 @@ public class VehicleReturn {
     private String notes;
     private int receivedBy;
     private int returnedBy;
-    private String status;
     private LocalDateTime createdAt;
 
     public VehicleReturn() {
@@ -124,6 +122,14 @@ public class VehicleReturn {
 
     public void setInteriorCondition(String interiorCondition) {
         this.interiorCondition = interiorCondition;
+    }
+
+    public String getMechanicalCondition() {
+        return mechanicalCondition;
+    }
+
+    public void setMechanicalCondition(String mechanicalCondition) {
+        this.mechanicalCondition = mechanicalCondition;
     }
 
     public String getDamageDescription() {
@@ -212,14 +218,6 @@ public class VehicleReturn {
 
     public void setReturnedBy(int returnedBy) {
         this.returnedBy = returnedBy;
-    }
-
-    public String getStatus() {
-        return fuelLevel;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {
