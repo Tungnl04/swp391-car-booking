@@ -36,6 +36,8 @@ public class BookingDetailServlet extends HttpServlet {
     private final BookingService bookingService = new BookingService();
     private final VehicleService vehicleService = new VehicleService();
     private final UserDAO userDAO = new UserDAO();
+    private final com.swp391.carrental.payment.service.PaymentService paymentService = new com.swp391.carrental.payment.service.PaymentService();
+    private final com.swp391.carrental.contract.service.ContractService contractService = new com.swp391.carrental.contract.service.ContractService();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -79,6 +81,35 @@ public class BookingDetailServlet extends HttpServlet {
             request.setAttribute("booking", booking);
             request.setAttribute("car", car);
 
+            // Fetch payments & contract info
+            java.util.List<com.swp391.carrental.payment.model.Payment> payments = paymentService.getPaymentsByBooking(bookingId);
+            boolean depositPaid = false;
+            boolean rentalPaid = false;
+            java.math.BigDecimal totalPaid = java.math.BigDecimal.ZERO;
+            for (com.swp391.carrental.payment.model.Payment p : payments) {
+                if ("COMPLETED".equalsIgnoreCase(p.getStatus())) {
+                    if ("REFUND".equalsIgnoreCase(p.getPaymentType())) {
+                        // Refunds reduce the net paid amount
+                        totalPaid = totalPaid.subtract(p.getAmount());
+                    } else {
+                        totalPaid = totalPaid.add(p.getAmount());
+                    }
+                    if ("DEPOSIT".equalsIgnoreCase(p.getPaymentType())) {
+                        depositPaid = true;
+                    } else if ("RENTAL".equalsIgnoreCase(p.getPaymentType())) {
+                        rentalPaid = true;
+                    }
+                }
+            }
+            request.setAttribute("payments", payments);
+            request.setAttribute("depositPaid", depositPaid);
+            request.setAttribute("rentalPaid", rentalPaid);
+            request.setAttribute("totalPaid", totalPaid);
+            request.setAttribute("remainingAmount", booking.getTotalAmount().subtract(totalPaid));
+
+            com.swp391.carrental.contract.model.RentalContract contract = contractService.getContractByBookingId(bookingId);
+            request.setAttribute("contract", contract);
+
             // Calculate rental days for display
             if (booking.getStartDate() != null && booking.getEndDate() != null) {
                 long days = java.time.temporal.ChronoUnit.DAYS.between(
@@ -94,6 +125,13 @@ public class BookingDetailServlet extends HttpServlet {
             if (successMessage != null) {
                 request.setAttribute("success", successMessage);
                 request.getSession().removeAttribute("successMessage");
+            }
+
+            // Transfer session error message
+            String errorMessage = (String) request.getSession().getAttribute("errorMessage");
+            if (errorMessage != null) {
+                request.setAttribute("error", errorMessage);
+                request.getSession().removeAttribute("errorMessage");
             }
 
             if (isStaffOrAdmin) {

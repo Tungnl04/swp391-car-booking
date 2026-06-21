@@ -185,43 +185,6 @@ public class BookingService {
             }
             
             boolean approved = bookingDAO.approve(bookingId, approvedBy);
-            
-            if (approved) {
-                // Auto generate contract
-                try {
-                    com.swp391.carrental.contract.dao.ContractDAO contractDAO = new com.swp391.carrental.contract.dao.ContractDAO();
-                    if (contractDAO.findByBookingId(bookingId) == null) {
-                        com.swp391.carrental.contract.model.RentalContract contract = new com.swp391.carrental.contract.model.RentalContract();
-                        contract.setBookingId(bookingId);
-                        contract.setCustomerId(booking.getCustomerId());
-                        contract.setCarId(booking.getCarId());
-                        contract.setStartDate(booking.getStartDate());
-                        contract.setEndDate(booking.getEndDate());
-                        
-                        Car car = carDAO.findById(booking.getCarId());
-                        if (car != null) {
-                            contract.setDailyRate(car.getDailyRate());
-                        } else {
-                            contract.setDailyRate(booking.getTotalAmount());
-                        }
-                        
-                        contract.setTotalAmount(booking.getTotalAmount());
-                        contract.setDepositAmount(booking.getDepositAmount());
-                        contract.setStatus(com.swp391.carrental.contract.constant.ContractStatus.ACTIVE);
-                        contract.setTermsAndConditions("Điều khoản thuê xe tự lái mặc định của hệ thống CarPro.");
-                        contract.setCreatedBy(approvedBy);
-                        
-                        String contractNumber = "CTR-"
-                                + java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy"))
-                                + "-" + String.format("%04d", bookingId);
-                        contract.setContractNumber(contractNumber);
-                        
-                        contractDAO.insert(contract);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
             return approved;
         } catch (SQLException e) {
             throw new AppException("Failed to approve booking.", e);
