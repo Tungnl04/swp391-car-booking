@@ -222,7 +222,7 @@
                     </a>
                 </c:if>
 
-                <c:if test="${booking.status == 'PENDING' || booking.status == 'CONFIRMED'}">
+                <c:if test="${booking.status == 'PENDING'}">
                     <form method="post" action="${pageContext.request.contextPath}/bookings/cancel" style="width:100%;" id="cancelForm">
                         <input type="hidden" name="bookingId" value="${booking.bookingId}"/>
                         <input type="hidden" name="reason" id="cancelReason" value="Khách hàng tự hủy"/>

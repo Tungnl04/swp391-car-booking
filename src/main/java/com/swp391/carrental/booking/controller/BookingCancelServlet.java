@@ -46,8 +46,15 @@ public class BookingCancelServlet extends HttpServlet {
                 boolean isStaffOrAdmin = com.swp391.carrental.user.constant.Role.STAFF.equals(currentUser.getRole())
                         || com.swp391.carrental.user.constant.Role.ADMIN.equals(currentUser.getRole());
                 
-                if (!isStaffOrAdmin && booking.getCustomerId() != currentUser.getUserId()) {
-                    request.getSession().setAttribute("errorMessage", "Bạn không có quyền hủy đơn đặt xe này.");
+                if (!isStaffOrAdmin) {
+                    if (booking.getCustomerId() != currentUser.getUserId()) {
+                        request.getSession().setAttribute("errorMessage", "Bạn không có quyền hủy đơn đặt xe này.");
+                    } else if ("CONFIRMED".equalsIgnoreCase(booking.getStatus())) {
+                        request.getSession().setAttribute("errorMessage", "Đơn hàng đã xác nhận (đã đóng cọc) không thể tự hủy. Vui lòng liên hệ nhân viên để hỗ trợ.");
+                    } else {
+                        bookingService.cancelBooking(bookingId, reason.trim());
+                        request.getSession().setAttribute("successMessage", "Hủy đơn thuê #" + bookingId + " thành công.");
+                    }
                 } else {
                     bookingService.cancelBooking(bookingId, reason.trim());
                     request.getSession().setAttribute("successMessage", "Hủy đơn thuê #" + bookingId + " thành công.");
