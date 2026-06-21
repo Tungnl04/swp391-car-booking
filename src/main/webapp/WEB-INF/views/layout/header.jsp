@@ -73,7 +73,7 @@
                     <span class="material-symbols-outlined">garage</span> Quản lý xe
                 </a>
                 <a href="${pageContext.request.contextPath}/vehicles/availability" class="bk-sidebar-link ${_cp == '/vehicles/availability' ? 'active' : ''}">
-                    <span class="material-symbols-outlined">calendar_today</span> Lịch trình xe
+                    <span class="material-symbols-outlined">calendar_today</span> Kiểm tra xe trống
                 </a>
                 <a href="${pageContext.request.contextPath}/maintenance" class="bk-sidebar-link ${_cp == '/maintenance' ? 'active' : ''}">
                     <span class="material-symbols-outlined">build</span> Lịch bảo dưỡng
