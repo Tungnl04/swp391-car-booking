@@ -23,7 +23,7 @@ public class CarImageDAO {
 
     public List<CarImage> findByCarId(int carId) throws SQLException {
         List<CarImage> images = new ArrayList<>();
-        String sql = "SELECT * FROM car_images WHERE car_id = ? ORDER BY sort_order";
+        String sql = "SELECT * FROM car_images WHERE car_id = ? ORDER BY is_primary DESC, sort_order ASC";
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, carId);
@@ -65,6 +65,36 @@ public class CarImageDAO {
         try (Connection conn = DBContext.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, carId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean setPrimary(int imageId, boolean isPrimary) throws SQLException {
+        String sql = "UPDATE car_images SET is_primary = ? WHERE image_id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setBoolean(1, isPrimary);
+            ps.setInt(2, imageId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean clearPrimaryByCarId(int carId) throws SQLException {
+        String sql = "UPDATE car_images SET is_primary = 0 WHERE car_id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, carId);
+            return ps.executeUpdate() > 0;
+        }
+    }
+
+    public boolean update(CarImage image) throws SQLException {
+        String sql = "UPDATE car_images SET caption = ?, sort_order = ? WHERE image_id = ?";
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, image.getCaption());
+            ps.setInt(2, image.getSortOrder());
+            ps.setInt(3, image.getImageId());
             return ps.executeUpdate() > 0;
         }
     }
