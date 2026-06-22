@@ -12,19 +12,27 @@ import com.swp391.carrental.dao.UserDAO;
 import com.swp391.carrental.model.CustomerProfile;
 import com.swp391.carrental.model.User;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.File;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 
 /**
- * Handles user profile view and edit.
- * URL: /profile
+ * Handles user profile view and edit. URL: /profile
  */
 @WebServlet(name = "ProfileServlet", urlPatterns = {"/profile"})
+@MultipartConfig(
+        fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 10 * 1024 * 1024,
+        maxRequestSize = 20 * 1024 * 1024
+)
 public class ProfileServlet extends HttpServlet {
 
     private final CustomerProfileDAO profileDAO = new CustomerProfileDAO();
@@ -49,12 +57,12 @@ public class ProfileServlet extends HttpServlet {
                 profile.setProfileId(profileId);
             }
             request.setAttribute("profile", profile);
-            
+
             String success = request.getParameter("success");
             if (success != null) {
                 request.setAttribute("success", "Cập nhật hồ sơ cá nhân thành công!");
             }
-            
+
             request.getRequestDispatcher("/WEB-INF/views/user/profile.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,6 +88,7 @@ public class ProfileServlet extends HttpServlet {
             String idCardNumber = request.getParameter("idCardNumber");
             String driverLicenseNumber = request.getParameter("driverLicenseNumber");
             String driverLicenseExpiryStr = request.getParameter("driverLicenseExpiry");
+            Part licenseImagePart = request.getPart("driverLicenseImage");
 
             // Update user core info
             currentUser.setFullName(fullName);
@@ -105,6 +114,54 @@ public class ProfileServlet extends HttpServlet {
             profile.setDriverLicenseNumber(driverLicenseNumber);
             if (driverLicenseExpiryStr != null && !driverLicenseExpiryStr.isEmpty()) {
                 profile.setDriverLicenseExpiry(LocalDate.parse(driverLicenseExpiryStr));
+            }
+
+            if (licenseImagePart != null
+                    && licenseImagePart.getSize() > 0) {
+
+                String contentType
+                        = licenseImagePart.getContentType();
+
+                if (!"image/png".equals(contentType)
+                        && !"image/jpeg".equals(contentType)) {
+
+                    request.setAttribute(
+                            "error",
+                            "Chỉ cho phép upload PNG hoặc JPG");
+
+                    doGet(request, response);
+                    return;
+                }
+
+                String uploadDir
+                        = getServletContext()
+                                .getRealPath("/uploads");
+
+                File dir = new File(uploadDir);
+
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+
+                String originalName
+                        = Paths.get(
+                                licenseImagePart
+                                        .getSubmittedFileName())
+                                .getFileName()
+                                .toString();
+
+                String fileName
+                        = System.currentTimeMillis()
+                        + "_"
+                        + originalName;
+
+                licenseImagePart.write(
+                        uploadDir
+                        + File.separator
+                        + fileName);
+
+                profile.setDriverLicenseImage(
+                        "uploads/" + fileName);
             }
 
             profileDAO.update(profile);
