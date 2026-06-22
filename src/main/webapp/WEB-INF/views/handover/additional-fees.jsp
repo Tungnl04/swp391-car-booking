@@ -187,6 +187,7 @@
         }
 
         document.getElementById('totalAdditionalFee').value = total;
+        document.getElementById('deposit').value = deposit;
     }
 
     recalculateFees();

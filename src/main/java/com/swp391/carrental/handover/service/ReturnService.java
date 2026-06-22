@@ -7,6 +7,8 @@ import com.swp391.carrental.booking.dao.BookingDAO;
 import com.swp391.carrental.core.exception.AppException;
 import com.swp391.carrental.handover.dao.ReturnDAO;
 import com.swp391.carrental.handover.model.VehicleReturn;
+import com.swp391.carrental.payment.dao.PaymentDAO;
+import com.swp391.carrental.payment.model.Payment;
 import com.swp391.carrental.vehicle.constant.CarStatus;
 import com.swp391.carrental.vehicle.dao.CarDAO;
 
@@ -27,6 +29,7 @@ public class ReturnService {
     private final ReturnDAO returnDAO = new ReturnDAO();
     private final BookingDAO bookingDAO = new BookingDAO();
     private final CarDAO carDAO = new CarDAO();
+    private final PaymentDAO paymentDAO = new PaymentDAO();
 
     public VehicleReturn getReturnById(int returnId) {
         try {
@@ -76,6 +79,7 @@ public class ReturnService {
             } else {
                 bookingDAO.updateStatus(vehicleReturn.getBookingId(), BookingStatus.COMPLETED);
             }
+
             return returnId;
         } catch (SQLException e) {
             throw new AppException("Failed to record vehicle return.", e);

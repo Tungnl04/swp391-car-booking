@@ -4,14 +4,12 @@ import java.sql.SQLException;
 import java.util.List;
 import com.swp391.carrental.booking.constant.BookingStatus;
 import com.swp391.carrental.booking.dao.BookingDAO;
-import com.swp391.carrental.booking.model.Booking;
 import com.swp391.carrental.core.exception.AppException;
 import com.swp391.carrental.handover.constant.HandoverStatus;
 import com.swp391.carrental.handover.dao.HandoverDAO;
 import com.swp391.carrental.handover.model.VehicleHandover;
 import com.swp391.carrental.vehicle.constant.CarStatus;
 import com.swp391.carrental.vehicle.dao.CarDAO;
-import com.swp391.carrental.vehicle.model.Car;
 
 /*
  * Name: HandoverService
