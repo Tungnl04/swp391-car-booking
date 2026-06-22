@@ -1,7 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <jsp:include page="/WEB-INF/views/layout/header.jsp">
-    <jsp:param name="pageTitle" value="Tạo Biên Bản Bàn Giao Xe"/>
+    <jsp:param name="pageTitle" value="Xem Biên bản Bàn giao xe"/>
 </jsp:include>
 
 <style>
@@ -78,12 +78,12 @@
         <div class="bk-breadcrumb">
             <a href="${pageContext.request.contextPath}/home">Trang chủ</a>
             <span class="material-symbols-outlined">chevron_right</span>
-            <a href="${pageContext.request.contextPath}/handovers">Biên bản bàn giao</a>
+            <a href="${pageContext.request.contextPath}/returns">Nhận lại xe</a>
             <span class="material-symbols-outlined">chevron_right</span>
-            <span class="current">Tạo biên bản mới</span>
+            <span class="current">Xem biên bản nhận lại xe</span>
         </div>
-        <h2>Biên bản Bàn giao xe</h2>
-        <p>Ghi nhận chỉ số thực tế (số km, mức xăng) và danh mục kiểm tra an toàn trước khi trao chìa khóa xe cho khách thuê. (BR-06)</p>
+        <h2>Biên bản Nhận lại xe</h2>
+        <p>Kiểm tra kỹ lưỡng quãng đường thực tế, mức nhiên liệu, hư hỏng và tính toán các phụ phí phát sinh khi khách hàng trả xe. (BR-07, BR-08)</p>
     </div>
 </div>
 
@@ -95,7 +95,7 @@
         </div>
     </c:if>
 
-    <form action="${pageContext.request.contextPath}/handovers/create" method="POST" enctype="multipart/form-data">
+    <form action="${pageContext.request.contextPath}/returns/detail" method="POST" enctype="multipart/form-data">
         <!-- Hidden Inputs for Booking and Car IDs -->
         <input type="hidden" name="bookingId" value="${bookingId}" />
         <input type="hidden" name="carId" value="${carId}" />
@@ -169,13 +169,18 @@
                     <label class="bk-form-label" for="currentOdo" style="font-weight:600;">Số km hiện tại (km)*</label>
                     <div class="bk-form-input-wrap" style="margin-top: 6px;">
                         <span class="material-symbols-outlined">speed</span>
-                        <input type="number" id="currentOdo" name="currentOdo" value="${currentOdo}" class="bk-form-input" placeholder="Nhập số liệu hiện tại"/>
+                        <input type="number" id="currentOdo" name="currentOdo" value="${returns.mileageAtReturn}" class="bk-form-input" placeholder="Nhập số liệu hiện tại"/>
                     </div>
-                    <c:if test="${not empty currentOdoError}">
-                        <div style="color:red; margin-top:5px;">
-                            ${currentOdoError}
-                        </div>
-                    </c:if>
+                    <span
+                        class="font-body-sm text-body-sm text-on-surface-variant mt-1 text-[12px]">Quãng đường đã đi:
+                        <span id="distance-value" style="font-weight:600; color: var(--primary);">0</span> km
+                        <br><span id="distance-value-error" style="font-weight:600; color: var(--primary);">
+                        </span>
+                        <c:if test="${not empty currentOdoError}">
+                            <div style="color:red; margin-top:5px;">
+                                ${currentOdoError}
+                            </div>
+                        </c:if>
                 </div>
 
                 <!-- Mức nhiên liệu radio segment selector -->
@@ -183,31 +188,27 @@
                     <label class="bk-form-label" style="font-weight:600;">Mức nhiên liệu *</label>
                     <div style="display: flex; background: var(--surface-container-low); border: 1.5px solid var(--outline-variant); border-radius: 8px; overflow: hidden; height: 42px; margin-top: 6px;">
                         <label style="flex: 1; text-align: center; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--outline-variant);">
-                            <input type="radio" name="fuel" value="E" class="fuel-radio" ${fuel == 'EMPTY' ? 'checked' : ''}/>
+                            <input type="radio" name="fuel" value="E" required="required" class="fuel-radio" ${returns.fuelLevel == 'EMPTY' ? 'checked="checked"' : ''}/>
                             <span class="fuel-label">E</span>
                         </label>
                         <label style="flex: 1; text-align: center; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--outline-variant);">
-                            <input type="radio" name="fuel" value="1/4" class="fuel-radio" ${fuel == '1/4' ? 'checked' : ''}/>
+                            <input type="radio" name="fuel" value="1/4" required="required" class="fuel-radio" ${returns.fuelLevel == '1/4' ? 'checked="checked"' : ''}/>
                             <span class="fuel-label">1/4</span>
                         </label>
                         <label style="flex: 1; text-align: center; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--outline-variant);">
-                            <input type="radio" name="fuel" value="1/2" class="fuel-radio" ${fuel == '1/2' ? 'checked' : ''}/>
+                            <input type="radio" name="fuel" value="1/2" required="required" class="fuel-radio" ${returns.fuelLevel == '1/2' ? 'checked="checked"' : ''}/>
                             <span class="fuel-label">1/2</span>
                         </label>
                         <label style="flex: 1; text-align: center; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center; border-right: 1px solid var(--outline-variant);">
-                            <input type="radio" name="fuel" value="3/4" class="fuel-radio" ${fuel == '3/4' ? 'checked' : ''}/>
+                            <input type="radio" name="fuel" value="3/4" required="required" class="fuel-radio" ${returns.fuelLevel == '3/4' ? 'checked="checked"' : ''}/>
                             <span class="fuel-label">3/4</span>
                         </label>
                         <label style="flex: 1; text-align: center; position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                            <input type="radio" name="fuel" value="F" class="fuel-radio" ${fuel == 'FULL' ? 'checked' : ''}/>
+                            <input type="radio" name="fuel" value="F" required="required" class="fuel-radio" ${returns.fuelLevel == 'FULL' ? 'checked="checked"' : ''}/>
                             <span class="fuel-label">F</span>
                         </label>
                     </div>
-                    <c:if test="${not empty currentFuelLevelError}">
-                        <div style="color:red; margin-top:5px;">
-                            ${currentFuelLevelError}
-                        </div>
-                    </c:if>
+                    <span class="font-body-sm text-body-sm text-on-surface-variant mt-1 text-[12px]">Mức lúc nhận: ${handover.fuelLevel}</span>
                 </div>
             </div>
         </div>
@@ -225,16 +226,32 @@
                     <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid var(--outline-variant); padding-bottom: 4px;">NGOẠI THẤT</div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkExteriorScratch" value="true" class="checklist-checkbox" ${chkExteriorScratch ? 'checked' : ''}/>
-                            <span>Không có vết xước hoặc vết lõm mới</span>
+                            <input type="checkbox" name="chkExteriorScratch" value="true" class="checklist-checkbox" ${returns.exteriorCondition.contains('Không vết xước/lõm mới') ? 'checked' : ''} />
+                            <span>Thân xe không có vết trầy xước mới</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkWindshield" value="true" class="checklist-checkbox" ${chkWindshield ? 'checked' : ''} />
-                            <span>Kính chắn gió nguyên vẹn</span>
+                            <input type="checkbox" name="chkExteriorBumper" value="true" class="checklist-checkbox" ${returns.exteriorCondition.contains('Cản trước và cản sau nguyên vẹn') ? 'checked' : ''} />
+                            <span>Cản trước và cản sau nguyên vẹn</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkTires" value="true" class="checklist-checkbox"  ${chkTires ? 'checked' : ''} />
-                            <span>Lốp xe trong tình trạng tốt</span>
+                            <input type="checkbox" name="chkExteriorGlass" value="true" class="checklist-checkbox" ${returns.exteriorCondition.contains('Kính chắn gió và cửa kính không nứt vỡ') ? 'checked' : ''} />
+                            <span>Kính chắn gió và cửa kính không nứt vỡ</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkExteriorLights" value="true" class="checklist-checkbox" ${returns.exteriorCondition.contains('Đèn pha, đèn hậu hoạt động bình thường') ? 'checked' : ''} />
+                            <span>Đèn pha, đèn hậu hoạt động bình thường</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkExteriorMirror" value="true" class="checklist-checkbox" ${returns.exteriorCondition.contains('Gương chiếu hậu đầy đủ, không hư hỏng') ? 'checked' : ''} />
+                            <span>Gương chiếu hậu đầy đủ, không hư hỏng</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkExteriorTireWheel" value="true" class="checklist-checkbox" ${returns.exteriorCondition.contains('Lốp xe và mâm xe trong tình trạng tốt') ? 'checked' : ''} />
+                            <span>Lốp xe và mâm xe trong tình trạng tốt</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkExteriorLicensePlate" value="true" class="checklist-checkbox" ${returns.exteriorCondition.contains('Biển số xe đầy đủ và rõ ràng') ? 'checked' : ''} />
+                            <span>Biển số xe đầy đủ và rõ ràng</span>
                         </label>
                     </div>
                 </div>
@@ -244,16 +261,28 @@
                     <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid var(--outline-variant); padding-bottom: 4px;">NỘI THẤT</div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkCleanliness" value="true" class="checklist-checkbox" ${chkCleanliness ? 'checked' : ''} />
-                            <span>Sạch sẽ và được hút bụi</span>
+                            <input type="checkbox" name="chkInteriorSeats" value="true" class="checklist-checkbox" ${returns.interiorCondition.contains('Ghế ngồi sạch sẽ, không rách hỏng') ? 'checked' : ''} />
+                            <span>Ghế ngồi sạch sẽ, không rách hỏng</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkOdor" value="true" class="checklist-checkbox" ${chkOdor ? 'checked' : ''} />
-                            <span>Không có mùi hôi</span>
+                            <input type="checkbox" name="chkInteriorDashboard" value="true" class="checklist-checkbox" ${returns.interiorCondition.contains('Taplo và bảng điều khiển hoạt động bình thường') ? 'checked' : ''} />
+                            <span>Taplo và bảng điều khiển hoạt động bình thường</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkMatsAccessories" value="true" class="checklist-checkbox" ${chkMatsAccessories ? 'checked' : ''} />
-                            <span>Có đủ thảm và phụ kiện</span>
+                            <input type="checkbox" name="chkInteriorAirConditioner" value="true" class="checklist-checkbox" ${returns.interiorCondition.contains('Điều hòa hoạt động tốt') ? 'checked' : ''} />
+                            <span>Điều hòa hoạt động tốt</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkInteriorAudioSystem" value="true" class="checklist-checkbox" ${returns.interiorCondition.contains('Hệ thống âm thanh hoạt động bình thường') ? 'checked' : ''} />
+                            <span>Hệ thống âm thanh hoạt động bình thường</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkInteriorCleanliness" value="true" class="checklist-checkbox" ${returns.interiorCondition.contains('Không có mùi lạ hoặc rác thải trong xe') ? 'checked' : ''} />
+                            <span>Không có mùi lạ hoặc rác thải trong xe</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkInteriorAccessories" value="true" class="checklist-checkbox" ${returns.interiorCondition.contains('Đầy đủ phụ kiện đi kèm') ? 'checked' : ''} />
+                            <span>Đầy đủ phụ kiện đi kèm</span>
                         </label>
                     </div>
                 </div>
@@ -263,12 +292,28 @@
                     <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid var(--outline-variant); padding-bottom: 4px;">ĐỘNG CƠ / MÁY MÓC</div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkEngine" value="true"  class="checklist-checkbox" ${chkEngine ? 'checked' : ''} />
+                            <input type="checkbox" name="chkEngineStart" value="true"  class="checklist-checkbox" ${returns.mechanicalCondition.contains('Động cơ khởi động bình thường') ? 'checked' : ''} />
                             <span>Động cơ khởi động bình thường</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkDashboardLights" value="true" class="checklist-checkbox" ${chkDashboardLights ? 'checked' : ''} />
-                            <span>Không có đèn cảnh báo trên bảng điều khiển</span>
+                            <input type="checkbox" name="chkEngineWarningLight" value="true"  class="checklist-checkbox" ${returns.mechanicalCondition.contains('Không có đèn cảnh báo trên bảng đồng hồ') ? 'checked' : ''} />
+                            <span>Không có đèn cảnh báo trên bảng đồng hồ</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkEngineFuelLevel" value="true"  class="checklist-checkbox" ${returns.mechanicalCondition.contains('Mức nhiên liệu đúng theo ghi nhận') ? 'checked' : ''} />
+                            <span>Mức nhiên liệu đúng theo ghi nhận</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkEngineNoise" value="true"  class="checklist-checkbox" ${returns.mechanicalCondition.contains('Không phát hiện tiếng ồn bất thường') ? 'checked' : ''} />
+                            <span>Không phát hiện tiếng ồn bất thường</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkEngineBrakeSystem" value="true"  class="checklist-checkbox" ${returns.mechanicalCondition.contains('Hệ thống phanh hoạt động bình thường') ? 'checked' : ''} />
+                            <span>Hệ thống phanh hoạt động bình thường</span>
+                        </label>
+                        <label class="checklist-label">
+                            <input type="checkbox" name="chkEngineFluidLeak" value="true"  class="checklist-checkbox" ${returns.mechanicalCondition.contains('Không phát hiện rò rỉ dầu hoặc chất lỏng') ? 'checked' : ''} />
+                            <span>Không phát hiện rò rỉ dầu hoặc chất lỏng</span>
                         </label>
                     </div>
                 </div>
@@ -286,24 +331,29 @@
                 </div>
 
                 <div style="border: 2px dashed var(--outline-variant); border-radius: 8px; padding: 24px; text-align: center; background: var(--surface-container-low); position: relative; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background = 'var(--surface-container-high)'" onmouseout="this.style.background = 'var(--surface-container-low)'">
-                    <input type="file" id="evidencePhotos" name="evidencePhotos" accept="image/*" multiple="multiple" style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;" />
+                    <input type="file" id="evidencePhotos" name="evidencePhotos" value="${returns.photosUrl}" accept="image/*" multiple="multiple" style="position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;" />
+                    <input type="hidden" name="remainingPhotos" id="remainingPhotos"/>
                     <div id="uploadPhotosError" style="color:red; margin-top:8px;"></div>
                     <span class="material-symbols-outlined" style="font-size: 42px; color: var(--text-secondary);">upload_file</span>
                     <p style="font-weight: 700; color: var(--primary); margin-top: 8px; font-size: 14px;">Nhấp để tải lên hoặc kéo và thả</p>
                     <p style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Định dạng SVG, PNG, JPG hoặc GIF (Tối đa 10MB)</p>
                 </div>
+
                 <div id="imagePreviewContainer" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:16px;"></div>
-                <c:if test="${not empty handover.photosUrl}">
-                    <c:set var="photos" value="${handover.photosUrl.split(',')}" />
-                    <c:forEach var="photo" items="${photos}">
-                        <img src="${pageContext.request.contextPath}${photo}"
-                             style="width:120px;
-                             height:120px;
-                             object-fit:cover;
-                             border-radius:8px;
-                             border:1px solid #ddd;" />
-                        <button type="button" class="del-old preview-remove-btn">&times;</button>
-                    </c:forEach>
+                <c:if test="${not empty returns.photosUrl}">
+                    <c:set var="photos" value="${returns.photosUrl.split(',')}" />
+                    <div id="existingImages">
+                        <c:forEach var="photo" items="${photos}">
+                            <span class="img-wrapper" data-src="${photo}" style="position:relative; display:inline-block;">
+                                <img src="${pageContext.request.contextPath}${photo}"
+                                     style="width:120px;
+                                     height:120px;
+                                     object-fit:cover;
+                                     border:1px solid #ddd;" />
+                                <button type="button" class="del-old preview-remove-btn">&times;</button>
+                            </span>
+                        </c:forEach>
+                    </div>
                 </c:if>
             </div>
 
@@ -314,30 +364,18 @@
                     <span>Ghi Chú Thêm</span>
                 </div>
                 <div style="flex-grow: 1;">
-                    <textarea name="notes" placeholder="Nhập ghi chú chi tiết về tình trạng xe tại thời điểm bàn giao (nếu có)..." style="width: 100%; height: 100%; min-height: 100px; padding: 12px; border: 1.5px solid var(--outline-variant); border-radius: 8px; background: var(--surface); color: var(--text-primary); font-size: 13px; font-family: inherit; resize: none; outline: none;" onfocus="this.style.borderColor = 'var(--primary)'" onblur="this.style.borderColor = 'var(--outline-variant)'">${notes}</textarea>
+                    <textarea name="notes" placeholder="Nhập ghi chú chi tiết về tình trạng xe tại thời điểm nhận lại xe (nếu có)..." style="width: 100%; height: 100%; min-height: 100px; padding: 12px; border: 1.5px solid var(--outline-variant); border-radius: 8px; background: var(--surface); color: var(--text-primary); font-size: 13px; font-family: inherit; resize: none; outline: none;" onfocus="this.style.borderColor = 'var(--primary)'" onblur="this.style.borderColor = 'var(--outline-variant)'">${returns.notes}</textarea>
                 </div>
             </div>
         </div>
 
         <!-- Action Footer -->
         <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; border-top: 1px solid var(--outline-variant); padding-top: 16px;">
-            <c:choose>
-                <c:when test="${not empty contract}">
-                    <a href="${pageContext.request.contextPath}/contracts" class="bk-btn bk-btn-outline" style="min-width: 120px; text-align: center;">
-                        Xem hợp đồng
-                    </a>
-                </c:when>
-                <c:otherwise>
-                    <a href="${pageContext.request.contextPath}/bookings/manage" class="bk-btn bk-btn-outline" style="min-width: 120px; text-align: center;">
-                        Quản lý đặt xe
-                    </a>
-                </c:otherwise>
-            </c:choose>
-            <a href="${pageContext.request.contextPath}/handovers" class="bk-btn bk-btn-outline" style="background: rgba(0, 0, 0, 0.05); color: var(--text-primary); border-color: transparent;">
-                Hủy bỏ
+            <a href="${pageContext.request.contextPath}/additional-fees?bookingId=${bookingId}&carId=${carId}" class="bk-btn bk-btn-outline" style="text-align: center;">
+                Tính phí
             </a>
-            <button type="submit" class="bk-btn bk-btn-primary" style="display: inline-flex; align-items: center; gap: 8px; font-weight:600;">
-                <span class="material-symbols-outlined" style="font-size: 18px;">check_circle</span> Xác nhận & Bàn giao xe
+            <button type="submit" name="action" value="confirm" class="bk-btn bk-btn-primary" style="display: inline-flex; align-items: center; gap: 8px; font-weight:600;">
+                <span class="material-symbols-outlined" style="font-size: 18px;">check_circle</span> Xác nhận trả xe
             </button>
         </div>
     </form>
@@ -346,11 +384,49 @@
 <script>
     document.addEventListener("DOMContentLoaded", function () {
 
+        const odoInput = document.getElementById('currentOdo');
+        const distanceDisplay1 = document.getElementById('distance-value');
+        const distanceDisplay2 = document.getElementById('distance-value-error');
+
+        const mileageAtHandover = parseFloat("${handover.mileageAtHandover}") || 0;
+
+        function updateDistance() {
+            const currentOdo = parseFloat(odoInput.value);
+
+            if (!isNaN(currentOdo) && currentOdo >= mileageAtHandover) {
+                const distance = currentOdo - mileageAtHandover;
+
+                distanceDisplay1.innerText = distance.toLocaleString();
+                distanceDisplay1.style.color = "var(--primary)";
+
+                distanceDisplay2.innerText = "";
+            } else if (odoInput.value === "") {
+                distanceDisplay1.innerText = "0";
+                distanceDisplay2.innerText = "";
+                distanceDisplay1.style.color = "var(--primary)";
+            } else {
+                distanceDisplay1.innerText = "0";
+                distanceDisplay2.innerText = "Lỗi: Số km không hợp lệ";
+                distanceDisplay1.style.color = "red";
+                distanceDisplay2.style.color = "red";
+            }
+        }
+        odoInput.addEventListener("input", updateDistance);
+        updateDistance();
+
         const fileInput = document.getElementById("evidencePhotos");
         const previewContainer = document.getElementById("imagePreviewContainer");
         const errorDiv = document.getElementById("uploadPhotosError");
+        const remainingPhotosInput = document.getElementById("remainingPhotos");
 
         let selectedFiles = [];
+        let existingPhotos = [];
+
+        document.querySelectorAll(".img-wrapper").forEach(function (imgWrapper) {
+            existingPhotos.push(imgWrapper.dataset.src);
+        });
+
+        remainingPhotosInput.value = existingPhotos.join(",");
 
         fileInput.addEventListener("change", function () {
 
@@ -358,7 +434,6 @@
 
             files.forEach(function (file) {
 
-                // Validate dung lượng tối đa 10MB
                 if (file.size > 10 * 1024 * 1024) {
                     showError(file.name + " vượt quá 10MB");
                     return;
@@ -366,13 +441,13 @@
 
                 selectedFiles.push(file);
 
-                previewImage(file);
+                previewNewImage(file);
             });
 
             updateFileInput();
         });
 
-        function previewImage(file) {
+        function previewNewImage(file) {
 
             const reader = new FileReader();
 
@@ -424,10 +499,26 @@
             fileInput.files = dt.files;
         }
 
+
+        document.querySelectorAll(".del-old").forEach(function (btn) {
+
+            btn.addEventListener("click", function () {
+
+                const wrapper = btn.parentElement;
+                const photoUrl = wrapper.dataset.src;
+
+                existingPhotos = existingPhotos.filter(function (url) {
+                    return url !== photoUrl;
+                });
+
+                remainingPhotosInput.value = existingPhotos.join(",");
+
+                wrapper.remove();
+            });
+        });
+
         function showError(message) {
-
             errorDiv.innerText = message;
-
             setTimeout(function () {
                 errorDiv.innerText = "";
             }, 3000);

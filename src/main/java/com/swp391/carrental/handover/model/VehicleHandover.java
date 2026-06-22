@@ -9,11 +9,9 @@ import java.time.LocalDateTime;
  * Version: 1.0
  * Description: Handles business logic and operations for VehicleHandover.
  */
-
-
 /**
- * Records when a vehicle is handed over to a customer.
- * Maps to the 'vehicle_handovers' table.
+ * Records when a vehicle is handed over to a customer. Maps to the
+ * 'vehicle_handovers' table.
  */
 public class VehicleHandover {
 
@@ -26,7 +24,7 @@ public class VehicleHandover {
     private String fuelLevel;
     private String exteriorCondition;
     private String interiorCondition;
-    private String accessoriesChecklist;
+    private String mechanicalCondition;
     private String photosUrl;
     private String notes;
     private int handedBy;
@@ -38,52 +36,131 @@ public class VehicleHandover {
     }
 
     // --- Getters and Setters ---
+    public int getHandoverId() {
+        return handoverId;
+    }
 
-    public int getHandoverId() { return handoverId; }
-    public void setHandoverId(int handoverId) { this.handoverId = handoverId; }
+    public void setHandoverId(int handoverId) {
+        this.handoverId = handoverId;
+    }
 
-    public int getBookingId() { return bookingId; }
-    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
+    public int getBookingId() {
+        return bookingId;
+    }
 
-    public Integer getContractId() { return contractId; }
-    public void setContractId(Integer contractId) { this.contractId = contractId; }
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
+    }
 
-    public int getCarId() { return carId; }
-    public void setCarId(int carId) { this.carId = carId; }
+    public Integer getContractId() {
+        return contractId;
+    }
 
-    public LocalDateTime getHandoverDate() { return handoverDate; }
-    public void setHandoverDate(LocalDateTime handoverDate) { this.handoverDate = handoverDate; }
+    public void setContractId(Integer contractId) {
+        this.contractId = contractId;
+    }
 
-    public int getMileageAtHandover() { return mileageAtHandover; }
-    public void setMileageAtHandover(int mileageAtHandover) { this.mileageAtHandover = mileageAtHandover; }
+    public int getCarId() {
+        return carId;
+    }
 
-    public String getFuelLevel() { return fuelLevel; }
-    public void setFuelLevel(String fuelLevel) { this.fuelLevel = fuelLevel; }
+    public void setCarId(int carId) {
+        this.carId = carId;
+    }
 
-    public String getExteriorCondition() { return exteriorCondition; }
-    public void setExteriorCondition(String exteriorCondition) { this.exteriorCondition = exteriorCondition; }
+    public LocalDateTime getHandoverDate() {
+        return handoverDate;
+    }
 
-    public String getInteriorCondition() { return interiorCondition; }
-    public void setInteriorCondition(String interiorCondition) { this.interiorCondition = interiorCondition; }
+    public void setHandoverDate(LocalDateTime handoverDate) {
+        this.handoverDate = handoverDate;
+    }
 
-    public String getAccessoriesChecklist() { return accessoriesChecklist; }
-    public void setAccessoriesChecklist(String accessoriesChecklist) { this.accessoriesChecklist = accessoriesChecklist; }
+    public int getMileageAtHandover() {
+        return mileageAtHandover;
+    }
 
-    public String getPhotosUrl() { return photosUrl; }
-    public void setPhotosUrl(String photosUrl) { this.photosUrl = photosUrl; }
+    public void setMileageAtHandover(int mileageAtHandover) {
+        this.mileageAtHandover = mileageAtHandover;
+    }
 
-    public String getNotes() { return notes; }
-    public void setNotes(String notes) { this.notes = notes; }
+    public String getFuelLevel() {
+        return fuelLevel;
+    }
 
-    public int getHandedBy() { return handedBy; }
-    public void setHandedBy(int handedBy) { this.handedBy = handedBy; }
+    public void setFuelLevel(String fuelLevel) {
+        this.fuelLevel = fuelLevel;
+    }
 
-    public int getReceivedBy() { return receivedBy; }
-    public void setReceivedBy(int receivedBy) { this.receivedBy = receivedBy; }
-    
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
+    public String getExteriorCondition() {
+        return exteriorCondition;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setExteriorCondition(String exteriorCondition) {
+        this.exteriorCondition = exteriorCondition;
+    }
+
+    public String getInteriorCondition() {
+        return interiorCondition;
+    }
+
+    public void setInteriorCondition(String interiorCondition) {
+        this.interiorCondition = interiorCondition;
+    }
+
+    public String getMechanicalCondition() {
+        return mechanicalCondition;
+    }
+
+    public void setMechanicalCondition(String mechanicalCondition) {
+        this.mechanicalCondition = mechanicalCondition;
+    }
+
+    public String getPhotosUrl() {
+        return photosUrl;
+    }
+
+    public void setPhotosUrl(String photosUrl) {
+        this.photosUrl = photosUrl;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public int getHandedBy() {
+        return handedBy;
+    }
+
+    public void setHandedBy(int handedBy) {
+        this.handedBy = handedBy;
+    }
+
+    public int getReceivedBy() {
+        return receivedBy;
+    }
+
+    public void setReceivedBy(int receivedBy) {
+        this.receivedBy = receivedBy;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

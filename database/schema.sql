@@ -271,6 +271,7 @@ CREATE TABLE vehicle_returns (
     fuel_level      NVARCHAR(20)    NULL,
     exterior_condition  NVARCHAR(MAX) NULL,
     interior_condition  NVARCHAR(MAX) NULL,
+    mechanical_condition  NVARCHAR(MAX) NULL,
     damage_description  NVARCHAR(MAX) NULL,
     photos_url      NVARCHAR(MAX)   NULL,
     late_fee        DECIMAL(18,2)   NOT NULL DEFAULT 0,

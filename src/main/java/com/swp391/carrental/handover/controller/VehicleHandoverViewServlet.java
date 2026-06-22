@@ -23,15 +23,8 @@ import com.swp391.carrental.vehicle.model.Car;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
-
-
-/**
- *
- * @author lenovo
- */
-@WebServlet(name = "VehicleHandoverView", urlPatterns = {"/handover/view"})
-public class VehicleHandoverView extends HttpServlet {
+@WebServlet(name = "VehicleHandoverViewServlet", urlPatterns = {"/handover/view"})
+public class VehicleHandoverViewServlet extends HttpServlet {
 
     private final HandoverService handoverService = new HandoverService();
     private final HandoverDAO handoverDAO = new HandoverDAO();
@@ -43,8 +36,6 @@ public class VehicleHandoverView extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("action = " + request.getParameter("action"));
-        System.out.println("bookingId = " + request.getParameter("bookingId"));
         try {
             String bookingIdStr = request.getParameter("bookingId");
             String carIdStr = request.getParameter("carId");
@@ -78,10 +69,9 @@ public class VehicleHandoverView extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("Do Post");
-        System.out.println("action = " + request.getParameter("action"));
-        System.out.println("bookingId = " + request.getParameter("bookingId"));
         String action = request.getParameter("action");
+        String carIdStr = request.getParameter("carId");
+        int carId = Integer.parseInt(carIdStr);
 
         if ("requiredUpdate".equals(action)) {
             try {
@@ -90,7 +80,7 @@ public class VehicleHandoverView extends HttpServlet {
                 VehicleHandover handover = handoverDAO.findByBookingId(bookingId);
 
                 if (handover != null) {
-                    handoverService.updateStatusRequiredUpdate(handover.getHandoverId());
+                    handoverService.updateStatusRequired(handover.getHandoverId());
                 }
 
                 response.sendRedirect(request.getContextPath() + "/bookings/detail?id=" + bookingId);
@@ -108,6 +98,9 @@ public class VehicleHandoverView extends HttpServlet {
 
                 if (handover != null) {
                     handoverService.updateStatusConfirm(handover.getHandoverId());
+                    Car car = carDAO.findById(carId);
+                    car.setMileage(handover.getMileageAtHandover());
+                    carDAO.update(car);
                 }
 
                 response.sendRedirect(request.getContextPath() + "/bookings/detail?id=" + bookingId);

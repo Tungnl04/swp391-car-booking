@@ -10,11 +10,9 @@ import java.time.LocalDateTime;
  * Version: 1.0
  * Description: Handles business logic and operations for VehicleReturn.
  */
-
-
 /**
- * Records when a vehicle is returned by a customer.
- * Maps to the 'vehicle_returns' table.
+ * Records when a vehicle is returned by a customer. Maps to the
+ * 'vehicle_returns' table.
  */
 public class VehicleReturn {
 
@@ -28,9 +26,10 @@ public class VehicleReturn {
     private String fuelLevel;
     private String exteriorCondition;
     private String interiorCondition;
+    private String mechanicalCondition;
     private String damageDescription;
     private String photosUrl;
-    private BigDecimal lateFee;
+    private BigDecimal lateHours;
     private BigDecimal extraKmFee;
     private BigDecimal damageFee;
     private BigDecimal cleaningFee;
@@ -45,70 +44,187 @@ public class VehicleReturn {
     }
 
     // --- Getters and Setters ---
+    public int getReturnId() {
+        return returnId;
+    }
 
-    public int getReturnId() { return returnId; }
-    public void setReturnId(int returnId) { this.returnId = returnId; }
+    public void setReturnId(int returnId) {
+        this.returnId = returnId;
+    }
 
-    public int getBookingId() { return bookingId; }
-    public void setBookingId(int bookingId) { this.bookingId = bookingId; }
+    public int getBookingId() {
+        return bookingId;
+    }
 
-    public Integer getContractId() { return contractId; }
-    public void setContractId(Integer contractId) { this.contractId = contractId; }
+    public void setBookingId(int bookingId) {
+        this.bookingId = bookingId;
+    }
 
-    public int getCarId() { return carId; }
-    public void setCarId(int carId) { this.carId = carId; }
+    public Integer getContractId() {
+        return contractId;
+    }
 
-    public Integer getHandoverId() { return handoverId; }
-    public void setHandoverId(Integer handoverId) { this.handoverId = handoverId; }
+    public void setContractId(Integer contractId) {
+        this.contractId = contractId;
+    }
 
-    public LocalDateTime getReturnDate() { return returnDate; }
-    public void setReturnDate(LocalDateTime returnDate) { this.returnDate = returnDate; }
+    public int getCarId() {
+        return carId;
+    }
 
-    public int getMileageAtReturn() { return mileageAtReturn; }
-    public void setMileageAtReturn(int mileageAtReturn) { this.mileageAtReturn = mileageAtReturn; }
+    public void setCarId(int carId) {
+        this.carId = carId;
+    }
 
-    public String getFuelLevel() { return fuelLevel; }
-    public void setFuelLevel(String fuelLevel) { this.fuelLevel = fuelLevel; }
+    public Integer getHandoverId() {
+        return handoverId;
+    }
 
-    public String getExteriorCondition() { return exteriorCondition; }
-    public void setExteriorCondition(String exteriorCondition) { this.exteriorCondition = exteriorCondition; }
+    public void setHandoverId(Integer handoverId) {
+        this.handoverId = handoverId;
+    }
 
-    public String getInteriorCondition() { return interiorCondition; }
-    public void setInteriorCondition(String interiorCondition) { this.interiorCondition = interiorCondition; }
+    public LocalDateTime getReturnDate() {
+        return returnDate;
+    }
 
-    public String getDamageDescription() { return damageDescription; }
-    public void setDamageDescription(String damageDescription) { this.damageDescription = damageDescription; }
+    public void setReturnDate(LocalDateTime returnDate) {
+        this.returnDate = returnDate;
+    }
 
-    public String getPhotosUrl() { return photosUrl; }
-    public void setPhotosUrl(String photosUrl) { this.photosUrl = photosUrl; }
+    public int getMileageAtReturn() {
+        return mileageAtReturn;
+    }
 
-    public BigDecimal getLateFee() { return lateFee; }
-    public void setLateFee(BigDecimal lateFee) { this.lateFee = lateFee; }
+    public void setMileageAtReturn(int mileageAtReturn) {
+        this.mileageAtReturn = mileageAtReturn;
+    }
 
-    public BigDecimal getExtraKmFee() { return extraKmFee; }
-    public void setExtraKmFee(BigDecimal extraKmFee) { this.extraKmFee = extraKmFee; }
+    public String getFuelLevel() {
+        return fuelLevel;
+    }
 
-    public BigDecimal getDamageFee() { return damageFee; }
-    public void setDamageFee(BigDecimal damageFee) { this.damageFee = damageFee; }
+    public void setFuelLevel(String fuelLevel) {
+        this.fuelLevel = fuelLevel;
+    }
 
-    public BigDecimal getCleaningFee() { return cleaningFee; }
-    public void setCleaningFee(BigDecimal cleaningFee) { this.cleaningFee = cleaningFee; }
+    public String getExteriorCondition() {
+        return exteriorCondition;
+    }
 
-    public BigDecimal getLostItemFee() { return lostItemFee; }
-    public void setLostItemFee(BigDecimal lostItemFee) { this.lostItemFee = lostItemFee; }
+    public void setExteriorCondition(String exteriorCondition) {
+        this.exteriorCondition = exteriorCondition;
+    }
 
-    public BigDecimal getTotalAdditionalFee() { return totalAdditionalFee; }
-    public void setTotalAdditionalFee(BigDecimal totalAdditionalFee) { this.totalAdditionalFee = totalAdditionalFee; }
+    public String getInteriorCondition() {
+        return interiorCondition;
+    }
 
-    public String getNotes() { return notes; }
-    public void setNotes(String notes) { this.notes = notes; }
+    public void setInteriorCondition(String interiorCondition) {
+        this.interiorCondition = interiorCondition;
+    }
 
-    public int getReceivedBy() { return receivedBy; }
-    public void setReceivedBy(int receivedBy) { this.receivedBy = receivedBy; }
+    public String getMechanicalCondition() {
+        return mechanicalCondition;
+    }
 
-    public int getReturnedBy() { return returnedBy; }
-    public void setReturnedBy(int returnedBy) { this.returnedBy = returnedBy; }
+    public void setMechanicalCondition(String mechanicalCondition) {
+        this.mechanicalCondition = mechanicalCondition;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public String getDamageDescription() {
+        return damageDescription;
+    }
+
+    public void setDamageDescription(String damageDescription) {
+        this.damageDescription = damageDescription;
+    }
+
+    public String getPhotosUrl() {
+        return photosUrl;
+    }
+
+    public void setPhotosUrl(String photosUrl) {
+        this.photosUrl = photosUrl;
+    }
+
+    public BigDecimal getLateHours() {
+        return lateHours;
+    }
+
+    public void setLateHours(BigDecimal lateHours) {
+        this.lateHours = lateHours;
+    }
+
+    public BigDecimal getExtraKmFee() {
+        return extraKmFee;
+    }
+
+    public void setExtraKmFee(BigDecimal extraKmFee) {
+        this.extraKmFee = extraKmFee;
+    }
+
+    public BigDecimal getDamageFee() {
+        return damageFee;
+    }
+
+    public void setDamageFee(BigDecimal damageFee) {
+        this.damageFee = damageFee;
+    }
+
+    public BigDecimal getCleaningFee() {
+        return cleaningFee;
+    }
+
+    public void setCleaningFee(BigDecimal cleaningFee) {
+        this.cleaningFee = cleaningFee;
+    }
+
+    public BigDecimal getLostItemFee() {
+        return lostItemFee;
+    }
+
+    public void setLostItemFee(BigDecimal lostItemFee) {
+        this.lostItemFee = lostItemFee;
+    }
+
+    public BigDecimal getTotalAdditionalFee() {
+        return totalAdditionalFee;
+    }
+
+    public void setTotalAdditionalFee(BigDecimal totalAdditionalFee) {
+        this.totalAdditionalFee = totalAdditionalFee;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public int getReceivedBy() {
+        return receivedBy;
+    }
+
+    public void setReceivedBy(int receivedBy) {
+        this.receivedBy = receivedBy;
+    }
+
+    public int getReturnedBy() {
+        return returnedBy;
+    }
+
+    public void setReturnedBy(int returnedBy) {
+        this.returnedBy = returnedBy;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

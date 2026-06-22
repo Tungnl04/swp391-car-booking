@@ -237,11 +237,11 @@
                         <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid var(--outline-variant); padding-bottom: 4px;">ĐỘNG CƠ / MÁY MÓC</div>
                         <div style="display: flex; flex-direction: column; gap: 8px;">
                             <label class="checklist-label">
-                                <input type="checkbox" name="chkEngine" value="true"  class="checklist-checkbox" ${handover.accessoriesChecklist.contains('Động cơ bình thường') ? 'checked' : ''} />
+                                <input type="checkbox" name="chkEngine" value="true"  class="checklist-checkbox" ${handover.mechanicalCondition.contains('Động cơ bình thường') ? 'checked' : ''} />
                                 <span>Động cơ khởi động bình thường</span>
                             </label>
                             <label class="checklist-label">
-                                <input type="checkbox" name="chkDashboardLights" value="true" class="checklist-checkbox" ${handover.accessoriesChecklist.contains('Không cảnh báo') ? 'checked' : ''} />
+                                <input type="checkbox" name="chkDashboardLights" value="true" class="checklist-checkbox" ${handover.mechanicalCondition.contains('Không cảnh báo') ? 'checked' : ''} />
                                 <span>Không có đèn cảnh báo trên bảng điều khiển</span>
                             </label>
                         </div>

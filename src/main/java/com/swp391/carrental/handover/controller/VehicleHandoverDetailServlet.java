@@ -8,11 +8,10 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import java.awt.image.BufferedImage;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
+
 import com.swp391.carrental.booking.dao.BookingDAO;
 import com.swp391.carrental.booking.model.Booking;
 import com.swp391.carrental.contract.dao.ContractDAO;
@@ -25,14 +24,13 @@ import com.swp391.carrental.user.model.User;
 import com.swp391.carrental.vehicle.dao.CarDAO;
 import com.swp391.carrental.vehicle.model.Car;
 
-@WebServlet(name = "HandoverDetailServlet", urlPatterns = {"/handovers/detail"})
+@WebServlet(name = "VehicleHandoverDetailServlet", urlPatterns = {"/handovers/detail"})
 @MultipartConfig(
-        fileSizeThreshold = 1024 * 1024 * 1,
         maxFileSize = 1024 * 1024 * 10,
         maxRequestSize = 1024 * 1024 * 15
 )
 
-public class HandoverDetailServlet extends HttpServlet {
+public class VehicleHandoverDetailServlet extends HttpServlet {
 
     private final HandoverService handoverService = new HandoverService();
     private final HandoverDAO handoverDAO = new HandoverDAO();
@@ -40,7 +38,6 @@ public class HandoverDetailServlet extends HttpServlet {
     private final CarDAO carDAO = new CarDAO();
     private final ContractDAO contractDAO = new ContractDAO();
     private final UserDAO userDAO = new UserDAO();
-    private static final String UPLOAD_DIR = "assets/images/handover";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -70,7 +67,6 @@ public class HandoverDetailServlet extends HttpServlet {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             request.setAttribute("error", "Lỗi tải thông tin: " + e.getMessage());
         }
         request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
@@ -170,12 +166,11 @@ public class HandoverDetailServlet extends HttpServlet {
 
                 handover.setExteriorCondition(exterior);
                 handover.setInteriorCondition(interior);
-                handover.setAccessoriesChecklist(accessories);
+                handover.setMechanicalCondition(accessories);
 
                 handoverService.updateHandoverVehicle(handover);
 
                 response.sendRedirect(request.getContextPath() + "/handovers");
-                return;
             } catch (Exception e) {
                 request.setAttribute("error", "Lỗi bàn giao: " + e.getMessage());
                 request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
@@ -273,24 +268,21 @@ public class HandoverDetailServlet extends HttpServlet {
 
     private boolean validateImages(HttpServletRequest request, HttpServletResponse response, int bookingId, int carId)
             throws ServletException, IOException {
+        long MAX_SIZE = 10 * 1024 * 1024;
+
         for (Part part : request.getParts()) {
-            if (!"evidencePhotos".equals(part.getName())
-                    || part.getSize() == 0) {
+            if (!"evidencePhotos".equals(part.getName()) || part.getSize() == 0) {
                 continue;
             }
 
-            BufferedImage img = ImageIO.read(part.getInputStream());
-
-            if (img == null) {
+            if (part.getSize() > MAX_SIZE) {
                 loadDetailData(request, bookingId, carId);
-                request.setAttribute("uploadPhotosError", "File tải lên không phải ảnh hợp lệ.");
-                request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
-                return false;
-            }
 
-            if (img.getWidth() > 800 || img.getHeight() > 400) {
-                loadDetailData(request, bookingId, carId);
-                request.setAttribute("error", "Ảnh vượt quá kích thước 800x400px");
+                request.setAttribute(
+                        "uploadPhotosError",
+                        "Ảnh " + part.getSubmittedFileName() + " vượt quá dung lượng 10MB."
+                );
+
                 request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
                 return false;
             }
@@ -331,7 +323,7 @@ public class HandoverDetailServlet extends HttpServlet {
             request.setAttribute("chkDashboardLights", request.getParameter("chkDashboardLights") != null);
 
         } catch (SQLException ex) {
-            Logger.getLogger(HandoverDetailServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(VehicleHandoverDetailServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }

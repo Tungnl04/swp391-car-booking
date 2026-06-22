@@ -49,6 +49,28 @@
         accent-color: var(--primary);
         cursor: pointer;
     }
+    .preview-remove-btn {
+        position: absolute;
+        top: 4px;
+        right: 4px;
+
+        width: 20px;
+        height: 20px;
+
+        border: none;
+        border-radius: 50%;
+
+        background: black;
+        color: white;
+
+        cursor: pointer;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        font-size: 12px;
+    }
 </style>
 
 <div class="bk-page-header">
@@ -135,7 +157,7 @@
         </div>
 
         <%-- Chỉ số đo km và nhiên liệu --%>
-        <div class="bk-card" style="padding: 24px; margin-bottom: 0; display: flex; flex-direction: column; grid-column:1 / span 2;">
+        <div class="bk-card" style="padding: 24px; margin-bottom: 24px; display: flex; flex-direction: column; grid-column:1 / span 2;">
             <div class="bk-card-title">
                 <span class="material-symbols-outlined">speed</span>
                 <span>Chỉ số trạng thái hiện tại</span>
@@ -236,11 +258,11 @@
                     <div style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid var(--outline-variant); padding-bottom: 4px;">ĐỘNG CƠ / MÁY MÓC</div>
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkEngine" value="true"  class="checklist-checkbox" ${handover.accessoriesChecklist.contains('Động cơ bình thường') ? 'checked' : ''} />
+                            <input type="checkbox" name="chkEngine" value="true"  class="checklist-checkbox" ${handover.mechanicalCondition.contains('Động cơ bình thường') ? 'checked' : ''} />
                             <span>Động cơ khởi động bình thường</span>
                         </label>
                         <label class="checklist-label">
-                            <input type="checkbox" name="chkDashboardLights" value="true" class="checklist-checkbox" ${handover.accessoriesChecklist.contains('Không cảnh báo') ? 'checked' : ''} />
+                            <input type="checkbox" name="chkDashboardLights" value="true" class="checklist-checkbox" ${handover.mechanicalCondition.contains('Không cảnh báo') ? 'checked' : ''} />
                             <span>Không có đèn cảnh báo trên bảng điều khiển</span>
                         </label>
                     </div>
@@ -266,16 +288,19 @@
                     <p style="font-weight: 700; color: var(--primary); margin-top: 8px; font-size: 14px;">Nhấp để tải lên hoặc kéo và thả</p>
                     <p style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">Định dạng SVG, PNG, JPG hoặc GIF (Tối đa 10MB)</p>
                 </div>
+
                 <div id="imagePreviewContainer" style="display:flex; flex-wrap:wrap; gap:12px; margin-top:16px;"></div>
                 <c:if test="${not empty handover.photosUrl}">
                     <c:set var="photos" value="${handover.photosUrl.split(',')}" />
-
                     <div id="existingImages">
                         <c:forEach var="photo" items="${photos}">
-                            <span class="img-wrapper" data-src="${photo}">
+                            <span class="img-wrapper" data-src="${photo}" style="position:relative; display:inline-block;">
                                 <img src="${pageContext.request.contextPath}${photo}"
-                                     style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid #ddd;" />
-                                <button type="button" class="del-old">x</button>
+                                     style="width:120px;
+                                     height:120px;
+                                     object-fit:cover;
+                                     border:1px solid #ddd;" />
+                                <button type="button" class="del-old preview-remove-btn">&times;</button>
                             </span>
                         </c:forEach>
                     </div>
@@ -315,103 +340,116 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+
         const fileInput = document.getElementById("evidencePhotos");
         const previewContainer = document.getElementById("imagePreviewContainer");
-        const errorDiv = document.getElementById("uploadPhotosError"); // Đảm bảo bạn có thẻ này trong HTML
+        const errorDiv = document.getElementById("uploadPhotosError");
         const remainingPhotosInput = document.getElementById("remainingPhotos");
 
-        let allNewFiles = [];
+        let selectedFiles = [];
         let existingPhotos = [];
 
-        // Lấy danh sách ảnh cũ từ server
-        document.querySelectorAll(".img-wrapper").forEach(el => {
-            existingPhotos.push(el.getAttribute("data-src"));
+        document.querySelectorAll(".img-wrapper").forEach(function (imgWrapper) {
+            existingPhotos.push(imgWrapper.dataset.src);
         });
+
         remainingPhotosInput.value = existingPhotos.join(",");
 
         fileInput.addEventListener("change", function () {
-            for (const file of Array.from(this.files)) {
-                if (!file.type.startsWith("image/")) {
-                    errorDiv.innerHTML += file.name + " không phải là tệp ảnh hợp lệ.<br>";
-                    continue;
+
+            const files = Array.from(fileInput.files);
+
+            files.forEach(function (file) {
+
+                if (file.size > 10 * 1024 * 1024) {
+                    showError(file.name + " vượt quá 10MB");
+                    return;
                 }
-                if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                    errorDiv.innerHTML += file.name + " vượt quá dung lượng cho phép (10MB).<br>";
-                    continue;
-                }
-                allNewFiles.push(file);
-            }
-            render();
-            updateInputFiles();
+
+                selectedFiles.push(file);
+
+                previewNewImage(file);
+            });
+
+            updateFileInput();
         });
 
-        function render() {
-            previewContainer.innerHTML = "";
-            allNewFiles.forEach((file, index) => {
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    const wrapper = document.createElement("div");
-                    wrapper.style.position = "relative";
-                    wrapper.style.display = "inline-block";
-                    wrapper.style.marginRight = "10px";
+        function previewNewImage(file) {
 
-                    const img = document.createElement("img");
-                    img.src = e.target.result;
-                    img.style.width = "120px";
-                    img.style.height = "120px";
-                    img.style.objectFit = "cover";
-                    img.style.borderRadius = "8px"; // Thêm bo góc cho đồng bộ
-                    img.style.border = "1px solid #ddd";
+            const reader = new FileReader();
 
-                    const removeBtn = document.createElement("button");
-                    removeBtn.innerHTML = "&times;";
-                    removeBtn.type = "button";
-                    removeBtn.style.position = "absolute";
-                    removeBtn.style.top = "-8px";
-                    removeBtn.style.right = "-8px";
-                    removeBtn.style.background = "black";
-                    removeBtn.style.color = "white";
-                    removeBtn.style.border = "none";
-                    removeBtn.style.borderRadius = "50%";
-                    removeBtn.style.width = "20px";
-                    removeBtn.style.height = "20px";
-                    removeBtn.style.cursor = "pointer";
-                    removeBtn.style.display = "flex";
-                    removeBtn.style.alignItems = "center";
-                    removeBtn.style.justifyContent = "center";
-                    removeBtn.style.fontSize = "14px";
+            reader.onload = function (e) {
 
-                    // Xóa ảnh mới trong allNewFiles
-                    removeBtn.onclick = () => {
-                        allNewFiles.splice(index, 1);
-                        render();
-                        updateInputFiles();
-                    };
+                const wrapper = document.createElement("div");
+                wrapper.style.position = "relative";
+                wrapper.style.display = "inline-block";
 
-                    wrapper.appendChild(img);
-                    wrapper.appendChild(removeBtn);
-                    previewContainer.appendChild(wrapper);
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.style.width = "120px";
+                img.style.height = "120px";
+                img.style.objectFit = "cover";
+
+                const deleteBtn = document.createElement("button");
+                deleteBtn.type = "button";
+                deleteBtn.innerHTML = "&times;";
+                deleteBtn.classList.add("preview-remove-btn");
+
+                deleteBtn.onclick = function () {
+
+                    selectedFiles = selectedFiles.filter(function (f) {
+                        return f !== file;
+                    });
+
+                    wrapper.remove();
+
+                    updateFileInput();
                 };
-                reader.readAsDataURL(file);
-            });
+
+                wrapper.appendChild(img);
+                wrapper.appendChild(deleteBtn);
+
+                previewContainer.appendChild(wrapper);
+            };
+
+            reader.readAsDataURL(file);
         }
 
-        function updateInputFiles() {
+        function updateFileInput() {
+
             const dt = new DataTransfer();
-            allNewFiles.forEach(f => dt.items.add(f));
+
+            selectedFiles.forEach(function (file) {
+                dt.items.add(file);
+            });
+
             fileInput.files = dt.files;
         }
 
-        // Xử lý nút xóa ảnh cũ
-        document.querySelectorAll(".del-old").forEach(btn => {
-            btn.onclick = function () {
-                const parent = this.parentElement;
-                const src = parent.getAttribute("data-src");
-                existingPhotos = existingPhotos.filter(p => p !== src);
-                parent.remove();
+
+        document.querySelectorAll(".del-old").forEach(function (btn) {
+
+            btn.addEventListener("click", function () {
+
+                const wrapper = btn.parentElement;
+                const photoUrl = wrapper.dataset.src;
+
+                existingPhotos = existingPhotos.filter(function (url) {
+                    return url !== photoUrl;
+                });
+
                 remainingPhotosInput.value = existingPhotos.join(",");
-            };
+
+                wrapper.remove();
+            });
         });
+
+        function showError(message) {
+            errorDiv.innerText = message;
+            setTimeout(function () {
+                errorDiv.innerText = "";
+            }, 3000);
+        }
     });
 </script>
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>

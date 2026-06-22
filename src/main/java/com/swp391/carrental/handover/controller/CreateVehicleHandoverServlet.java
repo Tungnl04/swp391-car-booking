@@ -8,17 +8,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import com.swp391.carrental.booking.dao.BookingDAO;
 import com.swp391.carrental.booking.model.Booking;
 import com.swp391.carrental.contract.dao.ContractDAO;
 import com.swp391.carrental.contract.model.RentalContract;
-import com.swp391.carrental.handover.dao.HandoverDAO;
 import com.swp391.carrental.handover.model.VehicleHandover;
 import com.swp391.carrental.handover.service.HandoverService;
 import com.swp391.carrental.user.dao.UserDAO;
@@ -36,12 +33,10 @@ import com.swp391.carrental.vehicle.model.Car;
 public class CreateVehicleHandoverServlet extends HttpServlet {
 
     private final HandoverService handoverService = new HandoverService();
-    private final HandoverDAO handoverDAO = new HandoverDAO();
     private final BookingDAO bookingDAO = new BookingDAO();
     private final CarDAO carDAO = new CarDAO();
     private final ContractDAO contractDAO = new ContractDAO();
     private final UserDAO userDAO = new UserDAO();
-    private static final String UPLOAD_DIR = "assets/images/handover";
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -210,7 +205,7 @@ public class CreateVehicleHandoverServlet extends HttpServlet {
 
             handover.setExteriorCondition(exterior);
             handover.setInteriorCondition(interior);
-            handover.setAccessoriesChecklist(accessories);
+            handover.setMechanicalCondition(accessories);
 
             handover.setPhotosUrl(photosUrl);
             handover.setNotes(notes);
@@ -319,25 +314,22 @@ public class CreateVehicleHandoverServlet extends HttpServlet {
 
     private boolean validateImages(HttpServletRequest request, HttpServletResponse response, int bookingId, int carId)
             throws ServletException, IOException {
+        long MAX_SIZE = 10 * 1024 * 1024;
+
         for (Part part : request.getParts()) {
-            if (!"evidencePhotos".equals(part.getName())
-                    || part.getSize() == 0) {
+            if (!"evidencePhotos".equals(part.getName()) || part.getSize() == 0) {
                 continue;
             }
 
-            BufferedImage img = ImageIO.read(part.getInputStream());
-
-            if (img == null) {
+            if (part.getSize() > MAX_SIZE) {
                 loadCreateData(request, bookingId, carId);
-                request.setAttribute("uploadPhotosError", "File tải lên không phải ảnh hợp lệ.");
-                request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-create.jsp").forward(request, response);
-                return false;
-            }
 
-            if (img.getWidth() > 800 || img.getHeight() > 400) {
-                loadCreateData(request, bookingId, carId);
-                request.setAttribute("error", "Ảnh vượt quá kích thước 800x400px");
-                request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-create.jsp").forward(request, response);
+                request.setAttribute(
+                        "uploadPhotosError",
+                        "Ảnh " + part.getSubmittedFileName() + " vượt quá dung lượng 10MB."
+                );
+
+                request.getRequestDispatcher("/WEB-INF/views/handover/vehicle-handover-detail.jsp").forward(request, response);
                 return false;
             }
         }
