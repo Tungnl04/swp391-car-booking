@@ -148,4 +148,71 @@ public class VehicleService {
             throw new AppException("Failed to get maintenance schedules.", e);
         }
     }
+
+    // Image management
+    public int addCarImage(CarImage image) {
+        try {
+            return carImageDAO.insert(image);
+        } catch (SQLException e) {
+            throw new AppException("Failed to add car image.", e);
+        }
+    }
+
+    public boolean deleteCarImage(int imageId) {
+        try {
+            return carImageDAO.delete(imageId);
+        } catch (SQLException e) {
+            throw new AppException("Failed to delete car image.", e);
+        }
+    }
+
+    public boolean setPrimaryImage(int carId, int imageId) {
+        try {
+            carImageDAO.clearPrimaryByCarId(carId);
+            return carImageDAO.setPrimary(imageId, true);
+        } catch (SQLException e) {
+            throw new AppException("Failed to set primary image.", e);
+        }
+    }
+
+    public void clearPrimaryImages(int carId) {
+        try {
+            carImageDAO.clearPrimaryByCarId(carId);
+        } catch (SQLException e) {
+            throw new AppException("Failed to clear primary images.", e);
+        }
+    }
+
+    // Maintenance management
+    public List<MaintenanceSchedule> getMaintenanceByCarId(int carId) {
+        try {
+            return maintenanceDAO.getMaintenanceByVehicle(carId);
+        } catch (SQLException e) {
+            throw new AppException("Failed to get maintenance schedules.", e);
+        }
+    }
+
+    public int addMaintenanceSchedule(MaintenanceSchedule schedule) {
+        try {
+            return maintenanceDAO.createMaintenance(schedule);
+        } catch (SQLException e) {
+            throw new AppException("Failed to add maintenance schedule.", e);
+        }
+    }
+
+    public boolean updateMaintenanceSchedule(MaintenanceSchedule schedule) {
+        try {
+            return maintenanceDAO.updateMaintenance(schedule);
+        } catch (SQLException e) {
+            throw new AppException("Failed to update maintenance schedule.", e);
+        }
+    }
+
+    public boolean deleteMaintenanceSchedule(int maintenanceId) {
+        try {
+            return maintenanceDAO.deleteMaintenance(maintenanceId);
+        } catch (SQLException e) {
+            throw new AppException("Failed to delete maintenance schedule.", e);
+        }
+    }
 }

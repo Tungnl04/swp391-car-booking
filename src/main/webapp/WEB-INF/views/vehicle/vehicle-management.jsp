@@ -29,8 +29,23 @@
             <span class="material-symbols-outlined" style="font-size: 18px;">build</span>
             Xe đang bảo trì
         </a>
+        <button onclick="openCreateModal()" class="bk-btn bk-btn-primary">
+            <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+            Thêm xe mới
+        </button>
     </div>
 </div>
+
+<c:if test="${not empty success}">
+    <div style="background:#E8F5E9; border-left:4px solid #2E7D32; padding:12px; margin-bottom:20px; border-radius:4px; color:#1B5E20;">
+        ✓ ${success}
+    </div>
+</c:if>
+<c:if test="${not empty error}">
+    <div style="background:#FFEBEE; border-left:4px solid #C62828; padding:12px; margin-bottom:20px; border-radius:4px; color:#B71C1C;">
+        ✗ ${error}
+    </div>
+</c:if>
 
 <%-- Stats/Summary Grid --%>
 <div class="bk-stats-grid">
@@ -83,6 +98,7 @@
             <table class="bk-table" id="vehicleTable">
                 <thead>
                     <tr>
+                        <th style="width:100px;">Ảnh</th>
                         <th>Tên Xe</th>
                         <th>Biển Số</th>
                         <th>Giá hàng ngày</th>
@@ -96,7 +112,20 @@
                 <tbody>
                     <c:forEach var="car" items="${cars}">
                         <c:set var="maintenance" value="${nextMaintenance[car.carId]}"/>
+                        <c:set var="carImage" value="${primaryImages[car.carId]}"/>
                         <tr data-status="${car.status}">
+                            <td style="padding: 8px;">
+                                <c:choose>
+                                    <c:when test="${not empty carImage}">
+                                        <img src="${pageContext.request.contextPath}${carImage}" alt="${car.brand} ${car.model}" style="width: 100%; height: 80px; object-fit: cover; border-radius: 4px; cursor: pointer;" onclick="window.open(this.src)" title="Nhấn để xem ảnh lớn">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <div style="width: 100%; height: 80px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px;">
+                                            <span class="material-symbols-outlined" style="font-size: 24px;">image_not_supported</span>
+                                        </div>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
                             <td class="font-semibold" style="color: var(--primary);">${car.brand} ${car.model} (${car.year})</td>
                             <td class="font-mono" style="font-weight: 600;">${car.licensePlate}</td>
                             <td class="font-semibold"><fmt:formatNumber value="${car.dailyRate}" type="number" groupingUsed="true"/> VND</td>
@@ -134,6 +163,12 @@
                                     <a href="${pageContext.request.contextPath}/vehicles/detail?id=${car.carId}" class="text-primary hover:text-primary-container p-1.5 rounded hover:bg-surface-container-low transition-colors" title="Xem chi tiết" style="display:inline-flex; align-items:center;">
                                         <span class="material-symbols-outlined" style="font-size: 20px;">visibility</span>
                                     </a>
+                                    <button onclick="openEditModal(${car.carId}, '${car.brand}', '${car.model}', ${car.year}, '${car.color}', ${car.seats}, '${car.transmission}', '${car.fuelType}', ${car.dailyRate}, '${car.description}', '${car.location}', '${car.features}', '${car.status}', ${car.mileage}, '${car.licensePlate}')" class="text-[#1976D2] hover:text-[#1565C0] p-1.5 rounded hover:bg-surface-container-low transition-colors" title="Sửa" style="border:none; background:none; cursor:pointer; display:inline-flex; align-items:center;">
+                                        <span class="material-symbols-outlined" style="font-size: 20px;">edit</span>
+                                    </button>
+                                    <button onclick="if(confirm('Bạn chắc chắn muốn xóa xe này?')) { deleteVehicle(${car.carId}); }" class="text-[#D32F2F] hover:text-[#B71C1C] p-1.5 rounded hover:bg-surface-container-low transition-colors" title="Xóa" style="border:none; background:none; cursor:pointer; display:inline-flex; align-items:center;">
+                                        <span class="material-symbols-outlined" style="font-size: 20px;">delete</span>
+                                    </button>
                                     <a href="${pageContext.request.contextPath}/maintenance?carId=${car.carId}" class="text-[#F57C00] hover:text-[#E65100] p-1.5 rounded hover:bg-surface-container-low transition-colors" title="Lịch bảo trì" style="display:inline-flex; align-items:center;">
                                         <span class="material-symbols-outlined" style="font-size: 20px;">build</span>
                                     </a>
@@ -154,6 +189,7 @@
 </div>
 
 <script>
+const contextPath = '${pageContext.request.contextPath}';
 let currentStatusFilter = 'ALL';
 
 function filterByStatus(status) {
@@ -232,6 +268,444 @@ window.addEventListener('DOMContentLoaded', () => {
         filterByStatus('ALL');
     }
 });
+
+// === MODALS ===
+function openCreateModal() {
+    document.getElementById('createForm').reset();
+    document.getElementById('createPrimaryImagePreview').innerHTML = '';
+    document.getElementById('createSecondaryImagePreview').innerHTML = '';
+    document.getElementById('createModal').style.display = 'block';
+}
+
+function closeCreateModal() {
+    document.getElementById('createModal').style.display = 'none';
+}
+
+function openEditModal(carId, brand, model, year, color, seats, transmission, fuelType, dailyRate, description, location, features, status, mileage, licensePlate) {
+    document.getElementById('editCarId').value = carId;
+    document.getElementById('editLicensePlate').value = licensePlate;
+    document.getElementById('editBrand').value = brand;
+    document.getElementById('editModel').value = model;
+    document.getElementById('editYear').value = year;
+    document.getElementById('editColor').value = color;
+    document.getElementById('editSeats').value = seats;
+    document.getElementById('editTransmission').value = transmission;
+    document.getElementById('editFuelType').value = fuelType;
+    document.getElementById('editDailyRate').value = dailyRate;
+    document.getElementById('editDescription').value = description;
+    document.getElementById('editLocation').value = location;
+    document.getElementById('editFeatures').value = features;
+    document.getElementById('editStatus').value = status;
+    document.getElementById('editMileage').value = mileage;
+
+    // Clear preview from previous edits
+    document.getElementById('editPrimaryImagePreview').innerHTML = '';
+    document.getElementById('editSecondaryImagePreview').innerHTML = '';
+    document.getElementById('editPrimaryImageInput').value = '';
+    document.getElementById('editSecondaryImageInput').value = '';
+
+    // Fetch current images
+    fetchCarImages(carId);
+
+    document.getElementById('editModal').style.display = 'block';
+}
+
+function previewImages(event, previewContainerId) {
+    const files = event.target.files;
+    const preview = document.getElementById(previewContainerId);
+    preview.innerHTML = '';
+
+    for (let file of files) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const wrapper = document.createElement('div');
+            wrapper.style.cssText = 'position:relative; background-color:#f0f0f0; padding:4px; border-radius:4px;';
+
+            const imgEl = document.createElement('img');
+            imgEl.src = e.target.result;
+            imgEl.style.cssText = 'width:100%; height:80px; object-fit:cover; border-radius:4px;';
+
+            const caption = document.createElement('span');
+            caption.style.cssText = 'font-size:11px; color:#666; display:block; margin-top:2px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;';
+            caption.textContent = file.name;
+
+            wrapper.appendChild(imgEl);
+            wrapper.appendChild(caption);
+            preview.appendChild(wrapper);
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function buildImageCard(img, carId) {
+    const card = document.createElement('div');
+    card.style.cssText = 'position:relative; background:#F5F5F5; border-radius:4px; overflow:hidden; border:2px solid ' + (img.isPrimary ? '#FFC107' : '#E0E0E0') + ';';
+
+    if (img.isPrimary) {
+        const badge = document.createElement('div');
+        badge.style.cssText = 'position:absolute; top:4px; right:4px; background:#FFC107; color:#333; padding:2px 6px; border-radius:3px; font-size:10px; font-weight:bold;';
+        badge.textContent = '★ Chính';
+        card.appendChild(badge);
+    }
+
+    const imgEl = document.createElement('img');
+    imgEl.src = contextPath + img.imageUrl;
+    imgEl.style.cssText = 'width:100%; height:100px; object-fit:cover;';
+    card.appendChild(imgEl);
+
+    const actions = document.createElement('div');
+    actions.style.cssText = 'padding:6px; background:#fff; display:flex; gap:4px; justify-content:space-between;';
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'bk-btn bk-btn-sm';
+    deleteBtn.style.cssText = 'flex:1; font-size:11px; padding:4px;';
+    deleteBtn.textContent = '🗑 Xóa';
+    deleteBtn.onclick = function() { deleteCarImage(img.imageId, carId); };
+    actions.appendChild(deleteBtn);
+
+    if (img.isPrimary) {
+        const lockedBtn = document.createElement('button');
+        lockedBtn.type = 'button';
+        lockedBtn.disabled = true;
+        lockedBtn.style.cssText = 'flex:1; font-size:11px; padding:4px; opacity:0.5; cursor:default;';
+        lockedBtn.textContent = '✓ Chính';
+        actions.appendChild(lockedBtn);
+    } else {
+        const makePrimaryBtn = document.createElement('button');
+        makePrimaryBtn.type = 'button';
+        makePrimaryBtn.className = 'bk-btn bk-btn-sm';
+        makePrimaryBtn.style.cssText = 'flex:1; font-size:11px; padding:4px;';
+        makePrimaryBtn.textContent = '⭐ Làm Chính';
+        makePrimaryBtn.onclick = function() { setPrimaryCarImage(img.imageId, carId); };
+        actions.appendChild(makePrimaryBtn);
+    }
+
+    card.appendChild(actions);
+    return card;
+}
+
+function fetchCarImages(carId) {
+    const primaryContainer = document.getElementById('currentPrimaryImage');
+    const secondaryContainer = document.getElementById('currentSecondaryImages');
+    primaryContainer.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:#999; font-size:12px;">Đang tải ảnh...</div>';
+    secondaryContainer.innerHTML = '';
+
+    fetch(contextPath + '/vehicles/manage?action=getCarImages&carId=' + carId)
+        .then(response => response.json())
+        .then(images => {
+            primaryContainer.innerHTML = '';
+            secondaryContainer.innerHTML = '';
+
+            const primaryImages = images.filter(img => img.isPrimary);
+            const secondaryImages = images.filter(img => !img.isPrimary);
+
+            if (primaryImages.length === 0) {
+                primaryContainer.innerHTML = '<div style="grid-column:1/-1; padding:12px; background:#F5F5F5; border-radius:4px; font-size:12px; color:#999;">Chưa có ảnh chính</div>';
+            } else {
+                primaryImages.forEach(img => primaryContainer.appendChild(buildImageCard(img, carId)));
+            }
+
+            if (secondaryImages.length === 0) {
+                secondaryContainer.innerHTML = '<div style="grid-column:1/-1; padding:12px; background:#F5F5F5; border-radius:4px; font-size:12px; color:#999;">Chưa có ảnh phụ</div>';
+            } else {
+                secondaryImages.forEach(img => secondaryContainer.appendChild(buildImageCard(img, carId)));
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching images:', error);
+            primaryContainer.innerHTML = '<div style="grid-column:1/-1; color:red; font-size:12px;">Lỗi tải ảnh</div>';
+        });
+}
+
+function deleteCarImage(imageId, carId) {
+    if (!confirm('Bạn chắc chắn muốn xóa ảnh này?')) return;
+
+    fetch(contextPath + '/vehicles/manage?action=deleteImage&imageId=' + imageId, {method: 'POST'})
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                fetchCarImages(carId);
+            } else {
+                alert('Xóa ảnh thất bại');
+            }
+        })
+        .catch(error => console.error('Error deleting image:', error));
+}
+
+function setPrimaryCarImage(imageId, carId) {
+    fetch(contextPath + '/vehicles/manage?action=setPrimaryImage&imageId=' + imageId + '&carId=' + carId, {method: 'POST'})
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                fetchCarImages(carId);
+            } else {
+                alert('Cập nhật ảnh chính thất bại');
+            }
+        })
+        .catch(error => console.error('Error setting primary image:', error));
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+function deleteVehicle(carId) {
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '${pageContext.request.contextPath}/vehicles/manage';
+    form.innerHTML = '<input type="hidden" name="action" value="delete"><input type="hidden" name="carId" value="' + carId + '">';
+    document.body.appendChild(form);
+    form.submit();
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    let createModal = document.getElementById('createModal');
+    let editModal = document.getElementById('editModal');
+    if (event.target == createModal) {
+        createModal.style.display = 'none';
+    }
+    if (event.target == editModal) {
+        editModal.style.display = 'none';
+    }
+};
 </script>
+
+<!-- CREATE VEHICLE MODAL -->
+<div id="createModal" class="bk-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.4); overflow-y:auto;">
+    <div class="bk-modal-content" style="background-color:#fefefe; margin:2% auto; padding:20px; border:1px solid #888; width:90%; max-width:700px; border-radius:8px; max-height:90vh; overflow-y:auto;">
+        <span class="bk-close" onclick="closeCreateModal()" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer; position:sticky; top:0;">&times;</span>
+        <h2 style="margin-top:0; color:var(--primary);">Thêm Xe Mới</h2>
+        <form id="createForm" method="POST" action="${pageContext.request.contextPath}/vehicles/manage" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="create">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Biển Số *</label>
+                    <input type="text" name="licensePlate" class="bk-form-input" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Hãng Xe *</label>
+                    <input type="text" name="brand" class="bk-form-input" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Model *</label>
+                    <input type="text" name="model" class="bk-form-input" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Năm SX *</label>
+                    <input type="number" name="year" class="bk-form-input" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Màu Sắc</label>
+                    <input type="text" name="color" class="bk-form-input">
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Số Ghế *</label>
+                    <input type="number" name="seats" class="bk-form-input" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Hộp Số *</label>
+                    <select name="transmission" class="bk-form-select" required>
+                        <option value="AUTOMATIC">Tự Động</option>
+                        <option value="MANUAL">Số Sàn</option>
+                    </select>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Loại Nhiên Liệu *</label>
+                    <select name="fuelType" class="bk-form-select" required>
+                        <option value="GASOLINE">Xăng</option>
+                        <option value="DIESEL">Dầu Diesel</option>
+                        <option value="ELECTRIC">Điện</option>
+                        <option value="HYBRID">Hybrid</option>
+                    </select>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Giá Thuê (VND/ngày) *</label>
+                    <input type="number" name="dailyRate" class="bk-form-input" step="100000" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Trạng Thái *</label>
+                    <select name="status" class="bk-form-select" required>
+                        <option value="AVAILABLE">Có Sẵn</option>
+                        <option value="MAINTENANCE">Bảo Trì</option>
+                        <option value="INACTIVE">Ngưng Hoạt Động</option>
+                    </select>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Địa Điểm</label>
+                    <input type="text" name="location" class="bk-form-input">
+                </div>
+            </div>
+            <div class="bk-form-group">
+                <label class="bk-form-label">Mô Tả</label>
+                <textarea name="description" class="bk-form-input" rows="3"></textarea>
+            </div>
+            <div class="bk-form-group">
+                <label class="bk-form-label">Tính Năng (cách nhau bằng dấu phẩy)</label>
+                <input type="text" name="features" class="bk-form-input" placeholder="GPS, Bluetooth, Dashcam...">
+            </div>
+
+            <div style="border-top: 1px solid #ddd; padding-top: 16px; margin-top: 16px;">
+                <label class="bk-form-label" style="font-weight:600; margin-bottom:8px; display:block;">Ảnh Xe</label>
+
+                <div class="bk-form-group">
+                    <label class="bk-form-label" style="font-size:12px; color:#F57C00;">★ Ảnh chính (hiển thị ở danh sách) *</label>
+                    <label style="display:block; padding:16px; border:2px dashed #FFC107; border-radius:8px; text-align:center; cursor:pointer; background:#FFFDE7; transition: all 0.2s;">
+                        <input type="file" id="createPrimaryImageInput" name="primaryImage" accept="image/*" required style="display:none;" onchange="previewImages(event, 'createPrimaryImagePreview')">
+                        <span class="material-symbols-outlined" style="font-size:28px; color:#F57C00;">star</span>
+                        <div style="font-weight:600; color:#F57C00; margin-top:4px; font-size:13px;">Chọn ảnh chính</div>
+                        <div style="font-size:11px; color:#666; margin-top:2px;">JPG, PNG (tối đa 10MB)</div>
+                    </label>
+                    <div id="createPrimaryImagePreview" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(80px, 1fr)); gap:8px; margin-top:8px;"></div>
+                </div>
+
+                <div class="bk-form-group" style="margin-top:12px;">
+                    <label class="bk-form-label" style="font-size:12px;">Ảnh phụ (có thể chọn nhiều)</label>
+                    <label style="display:block; padding:16px; border:2px dashed #ccc; border-radius:8px; text-align:center; cursor:pointer; transition: all 0.2s;">
+                        <input type="file" id="createSecondaryImageInput" name="secondaryImages" multiple accept="image/*" style="display:none;" onchange="previewImages(event, 'createSecondaryImagePreview')">
+                        <span class="material-symbols-outlined" style="font-size:28px; color:#1976D2;">add_photo_alternate</span>
+                        <div style="font-weight:600; color:#1976D2; margin-top:4px; font-size:13px;">Chọn ảnh phụ</div>
+                        <div style="font-size:11px; color:#666; margin-top:2px;">JPG, PNG (tối đa 10MB/ảnh)</div>
+                    </label>
+                    <div id="createSecondaryImagePreview" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(80px, 1fr)); gap:8px; margin-top:8px;"></div>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+                <button type="button" onclick="closeCreateModal()" class="bk-btn bk-btn-outline">Hủy</button>
+                <button type="submit" class="bk-btn bk-btn-primary">Tạo Xe</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- EDIT VEHICLE MODAL -->
+<div id="editModal" class="bk-modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.4); overflow-y:auto;">
+    <div class="bk-modal-content" style="background-color:#fefefe; margin:2% auto; padding:20px; border:1px solid #888; width:90%; max-width:700px; border-radius:8px; max-height:90vh; overflow-y:auto;">
+        <span class="bk-close" onclick="closeEditModal()" style="color:#aaa; float:right; font-size:28px; font-weight:bold; cursor:pointer; position:sticky; top:0;">&times;</span>
+        <h2 style="margin-top:0; color:var(--primary);">Sửa Thông Tin Xe</h2>
+        <form id="editForm" method="POST" action="${pageContext.request.contextPath}/vehicles/manage" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="update">
+            <input type="hidden" name="carId" id="editCarId">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px;">
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Biển Số (không thay đổi)</label>
+                    <input type="text" id="editLicensePlate" class="bk-form-input" disabled>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Hãng Xe *</label>
+                    <input type="text" id="editBrand" name="brand" class="bk-form-input" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Model *</label>
+                    <input type="text" id="editModel" name="model" class="bk-form-input" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Năm SX *</label>
+                    <input type="number" id="editYear" name="year" class="bk-form-input" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Màu Sắc</label>
+                    <input type="text" id="editColor" name="color" class="bk-form-input">
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Số Ghế *</label>
+                    <input type="number" id="editSeats" name="seats" class="bk-form-input" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Hộp Số *</label>
+                    <select id="editTransmission" name="transmission" class="bk-form-select" required>
+                        <option value="AUTOMATIC">Tự Động</option>
+                        <option value="MANUAL">Số Sàn</option>
+                    </select>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Loại Nhiên Liệu *</label>
+                    <select id="editFuelType" name="fuelType" class="bk-form-select" required>
+                        <option value="GASOLINE">Xăng</option>
+                        <option value="DIESEL">Dầu Diesel</option>
+                        <option value="ELECTRIC">Điện</option>
+                        <option value="HYBRID">Hybrid</option>
+                    </select>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Giá Thuê (VND/ngày) *</label>
+                    <input type="number" id="editDailyRate" name="dailyRate" class="bk-form-input" step="100000" required>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Trạng Thái *</label>
+                    <select id="editStatus" name="status" class="bk-form-select" required>
+                        <option value="AVAILABLE">Có Sẵn</option>
+                        <option value="RENTED">Đã Thuê</option>
+                        <option value="MAINTENANCE">Bảo Trì</option>
+                        <option value="INACTIVE">Ngưng Hoạt Động</option>
+                    </select>
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Số KM Hiện Tại</label>
+                    <input type="number" id="editMileage" name="mileage" class="bk-form-input">
+                </div>
+                <div class="bk-form-group">
+                    <label class="bk-form-label">Địa Điểm</label>
+                    <input type="text" id="editLocation" name="location" class="bk-form-input">
+                </div>
+            </div>
+            <div class="bk-form-group">
+                <label class="bk-form-label">Mô Tả</label>
+                <textarea id="editDescription" name="description" class="bk-form-input" rows="3"></textarea>
+            </div>
+            <div class="bk-form-group">
+                <label class="bk-form-label">Tính Năng (cách nhau bằng dấu phẩy)</label>
+                <input type="text" id="editFeatures" name="features" class="bk-form-input" placeholder="GPS, Bluetooth, Dashcam...">
+            </div>
+
+            <div style="border-top: 1px solid #ddd; padding-top: 16px; margin-top: 16px;">
+                <h3 style="font-size:14px; font-weight:600; margin-bottom:12px;">Quản Lý Ảnh Xe</h3>
+
+                <!-- Ảnh chính hiện tại -->
+                <p style="font-size:12px; color:#F57C00; font-weight:600; margin-bottom:4px;">★ Ảnh chính hiện tại</p>
+                <div id="currentPrimaryImage" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:12px; margin-bottom:16px;">
+                    <!-- Will be populated by JavaScript after fetching -->
+                </div>
+
+                <!-- Ảnh phụ hiện tại -->
+                <p style="font-size:12px; color:#666; font-weight:600; margin-bottom:4px;">Ảnh phụ hiện tại</p>
+                <div id="currentSecondaryImages" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:12px; margin-bottom:16px;">
+                    <!-- Will be populated by JavaScript after fetching -->
+                </div>
+
+                <!-- Đổi ảnh chính -->
+                <div class="bk-form-group" style="margin-top:8px;">
+                    <label class="bk-form-label" style="font-size:12px; color:#F57C00;">Đổi ảnh chính (tùy chọn)</label>
+                    <label style="display:block; padding:16px; border:2px dashed #FFC107; border-radius:8px; text-align:center; cursor:pointer; background:#FFFDE7; transition: all 0.2s;">
+                        <input type="file" id="editPrimaryImageInput" name="newPrimaryImage" accept="image/*" style="display:none;" onchange="previewImages(event, 'editPrimaryImagePreview')">
+                        <span class="material-symbols-outlined" style="font-size:28px; color:#F57C00;">star</span>
+                        <div style="font-weight:600; color:#F57C00; margin-top:4px; font-size:13px;">Chọn ảnh chính mới</div>
+                        <div style="font-size:11px; color:#666; margin-top:2px;">Ảnh chính cũ sẽ chuyển thành ảnh phụ</div>
+                    </label>
+                    <div id="editPrimaryImagePreview" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(80px, 1fr)); gap:8px; margin-top:8px;"></div>
+                </div>
+
+                <!-- Thêm ảnh phụ -->
+                <div class="bk-form-group" style="margin-top:12px;">
+                    <label class="bk-form-label" style="font-size:12px;">Thêm ảnh phụ</label>
+                    <label style="display:block; padding:16px; border:2px dashed #ccc; border-radius:8px; text-align:center; cursor:pointer; transition: all 0.2s;">
+                        <input type="file" id="editSecondaryImageInput" name="newSecondaryImages" multiple accept="image/*" style="display:none;" onchange="previewImages(event, 'editSecondaryImagePreview')">
+                        <span class="material-symbols-outlined" style="font-size:28px; color:#1976D2;">add_photo_alternate</span>
+                        <div style="font-weight:600; color:#1976D2; margin-top:4px; font-size:13px;">Chọn ảnh phụ mới</div>
+                        <div style="font-size:11px; color:#666; margin-top:2px;">JPG, PNG (tối đa 10MB/ảnh)</div>
+                    </label>
+                    <div id="editSecondaryImagePreview" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(80px, 1fr)); gap:8px; margin-top:8px;"></div>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:20px;">
+                <button type="button" onclick="closeEditModal()" class="bk-btn bk-btn-outline">Hủy</button>
+                <button type="submit" class="bk-btn bk-btn-primary">Lưu Thay Đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 <jsp:include page="/WEB-INF/views/layout/footer.jsp"/>
