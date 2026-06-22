@@ -36,6 +36,7 @@
                     <th>Ngày nhận xe</th>
                     <th>Quãng đường đi</th>
                     <th>Phụ thu phát sinh</th>
+                    <th>Tiền cọc</th>
                     <th>Nhân viên nhận xe</th>
                     <th>Thao tác</th>
                 </tr>
@@ -57,34 +58,21 @@
                                 <fmt:formatNumber value="${r.totalAdditionalFee}" type="number" groupingUsed="true"/>đ
                             </div>
                         </td>
+                        <td>
+                            <div style="font-weight:700;color:var(--error);">
+                                <fmt:formatNumber value="${deposits[r.bookingId]}" type="number" groupingUsed="true"/>đ
+                            </div>
+                        </td>
                         <td>Nhân viên #${r.receivedBy}</td>
                         <td>
                             <a href="${pageContext.request.contextPath}/returns/detail?bookingId=${r.bookingId}&carId=${r.carId}" class="bk-btn bk-btn-sm bk-btn-primary">Xem</a>
+                            <a href="${pageContext.request.contextPath}" class="bk-btn bk-btn-sm bk-btn-primary">Quyết toán</a>
                         </td>
                     </tr>
                 </c:forEach>
             </tbody>
         </table>
     </div>
-    <%--</c:if>--%>
-    <%--<c:if test="${empty returns}">--%>
-    <!-- Fallback data to show gorgeous table representation when database is clean -->
-    <!--        <div style="overflow-x:auto;">
-                <table class="bk-table" id="returnTable">
-                    <thead>
-                        <tr>
-                            <th>Mã BB</th>
-                            <th>Đơn thuê xe</th>
-                            <th>Mã Xe</th>
-                            <th>Ngày nhận xe</th>
-                            <th>Quãng đường đi</th>
-                            <th>Phụ thu phát sinh</th>
-                            <th>Nhân viên nhận xe</th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>-->
-    <%--</c:if>--%>
 </div>
 
 <script>

@@ -65,6 +65,7 @@ public class AdditionalFeesServlet extends HttpServlet {
                     request.setAttribute("damageFee", returns.getDamageFee());
                     request.setAttribute("cleaningFee", returns.getCleaningFee());
                     request.setAttribute("lostItemFee", returns.getLostItemFee());
+                    request.setAttribute("deposit", booking.getDepositAmount());
                     request.setAttribute("totalAdditionalFee", returns.getTotalAdditionalFee());
                     request.setAttribute("returns", returns);
                 }
@@ -77,9 +78,6 @@ public class AdditionalFeesServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("URL = " + request.getRequestURL());
-        System.out.println("QUERY = " + request.getQueryString());
-
         System.out.println("bookingId = " + request.getParameter("bookingId"));
         System.out.println("carId = " + request.getParameter("carId"));
         String action = request.getParameter("action");

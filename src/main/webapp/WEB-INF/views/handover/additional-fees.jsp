@@ -53,9 +53,9 @@
                         <div class="bk-form-input-wrap">
                             <span class="material-symbols-outlined">local_laundry_service</span>
                             <select id="cleaningFee" name="cleaningFee" class="bk-form-select">
-                                <option value="0">Sạch sẽ - 0đ</option>
-                                <option value="300000">Quá bẩn / Mùi thuốc lá - 300,000đ</option>
-                                <option value="600000">Cực kỳ dơ / Nôn trớ - 600,000đ</option>
+                                <option value="0.00">Sạch sẽ - 0đ</option>
+                                <option value="300000.00">Quá bẩn / Mùi thuốc lá - 300,000đ</option>
+                                <option value="600000.00">Cực kỳ dơ / Nôn trớ - 600,000đ</option>
                             </select>
                         </div>
                     </div>
@@ -111,6 +111,22 @@
                     <span class="label">Tổng phụ thu</span>
                     <span class="value" id="resTotal" style="color:var(--error);font-size:24px;font-weight:800;">0đ</span>
                 </div>
+
+                <div class="bk-summary-total">
+                    <span class="label">Tiền cọc khách đã trả</span>
+                    <span class="value" id="resDeposit" name="deposit" style="color:var(--error);font-size:24px;font-weight:800;">${booking.depositAmount}</span>
+                </div>
+
+                <div class="bk-summary-total">
+                    <span class="label">Số tiền hoàn lại</span>
+                    <span class="value" id="resRefund" style="color:var(--error);font-size:24px;font-weight:800;">0đ</span>
+                </div>
+
+                <div class="bk-summary-total">
+                    <span class="label">Số tiền khách cần thanh toán</span>
+                    <span class="value" id="resExtraPayment" style="color:var(--error);font-size:24px;font-weight:800;">0đ</span>
+                </div>
+
                 <div>${notification}</div>
 
                 <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px;">
@@ -127,6 +143,8 @@
 </form>
 
 <script>
+    document.getElementById("cleaningFee").value = "${returns.cleaningFee}";
+
     function formatMoney(amount) {
         return new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(amount).replace('₫', 'đ');
     }
@@ -143,12 +161,31 @@
 
         var total = lateFee + kmFee + cleaning + damage + lostItem;
 
+        var deposit = parseFloat("${booking.depositAmount}") || 0;
+        var refund = 0;
+        var extraPayment = 0;
+
+        if (deposit >= total) {
+            refund = deposit - total;
+        } else {
+            extraPayment = total - deposit;
+        }
+
         document.getElementById('resLate').textContent = formatMoney(lateFee);
         document.getElementById('resKm').textContent = formatMoney(kmFee);
         document.getElementById('resClean').textContent = formatMoney(cleaning);
         document.getElementById('resDamage').textContent = formatMoney(damage);
         document.getElementById('resLostItem').textContent = formatMoney(lostItem);
+
         document.getElementById('resTotal').textContent = formatMoney(total);
+
+        document.getElementById('resDeposit').textContent = formatMoney(deposit);
+        document.getElementById('resRefund').textContent = formatMoney(refund);
+
+        if (document.getElementById('resExtraPayment')) {
+            document.getElementById('resExtraPayment').textContent = formatMoney(extraPayment);
+        }
+
         document.getElementById('totalAdditionalFee').value = total;
     }
 

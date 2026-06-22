@@ -46,11 +46,6 @@ public class ReturnService {
 
     public List<VehicleReturn> getAllReturns() {
         try {
-//            LocalDateTime now = LocalDateTime.now();
-//            Booking booking = new Booking();
-//           if (now.isAfter(booking.getEndDate())){
-//               booking.setStatus("OVERDUE");
-//           }
             return returnDAO.findAll();
         } catch (SQLException e) {
             throw new AppException("Failed to get return records.", e);
